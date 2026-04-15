@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>버킷플레이스 최저가 수집 가이드</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    const firebaseConfig = {
+      apiKey: "AIzaSyDiqHX3NbbBgrJScItRgMtZ0uhBszOOy78",
+      authDomain: "bucket-lowest-price-guide.firebaseapp.com",
+      databaseURL: "https://bucket-lowest-price-guide-default-rtdb.firebaseio.com",
+      projectId: "bucket-lowest-price-guide",
+      storageBucket: "bucket-lowest-price-guide.firebasestorage.app",
+      messagingSenderId: "4458864122",
+      appId: "1:4458864122:web:956e91270531682a8cd843"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    window.__fb = { db, ref, set, onValue };
+    window.dispatchEvent(new Event("firebase-ready"));
+  </script>
+
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #181c26;
+      --surface2: #1e2435;
+      --border: #2a3045;
+      --accent: #4f87ff;
+      --accent2: #38d9a9;
+      --accent3: #ffd43b;
+      --text: #e8ecf4;
+      --text2: #9ba5be;
+      --text3: #6b7594;
+      --tag-bg: #1e2d4a;
+      --tag-color: #6fa3ff;
+      --badge-pass: #1a3d2e;
+      --badge-pass-text: #34c77b;
+      --badge-fail: #3d1a1a;
+      --badge-fail-text: #ff6b6b;
+      --badge-caution: #3d2e1a;
+      --badge-caution-text: #ffa94d;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #0d1520 0%, #141b2e 50%, #0f1824 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 0 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    }
+    .header-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--accent), #7c4dff);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .brand-text h1 {
+      font-size: 18px; font-weight: 700; letter-spacing: -0.3px;
+      color: var(--text);
+    }
+    .brand-text p { font-size: 12px; color: var(--text3); margin-top: 1px; }
+
+    .header-actions {
+      display: flex; gap: 8px; align-items: center;
+    }
+
+    #admin-btn, #save-btn {
+      padding: 7px 14px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    #admin-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text2);
+    }
+    #admin-btn:hover { border-color: var(--accent); color: var(--accent); }
+    #save-btn {
+      background: var(--accent);
+      color: #fff;
+      display: none;
+    }
+    #save-btn:hover { background: #3a6fe8; }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text3);
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent2);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* NAV TABS */
+    nav {
+      display: flex;
+      gap: 0;
+      margin-top: 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    .tab {
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text3);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .tab:hover { color: var(--text2); }
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── MAIN ── */
+    main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .card-title-row {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .step-badge {
+      font-size: 10px; font-weight: 700;
+      color: var(--accent);
+      background: rgba(79,135,255,0.1);
+      border: 1px solid rgba(79,135,255,0.25);
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+    }
+    .card-title {
+      font-size: 15px; font-weight: 700;
+      color: var(--text);
+    }
+    .card p {
+      font-size: 13.5px; color: var(--text2);
+      line-height: 1.7;
+    }
+    .card p + p { margin-top: 8px; }
+
+    /* ── GRID 2-col ── */
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+
+    /* ── RULES TABLE ── */
+    .rules-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .rules-table th {
+      background: var(--surface2);
+      color: var(--text2);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .rules-table td {
+      padding: 11px 14px;
+      color: var(--text2);
+      border-bottom: 1px solid rgba(42,48,69,0.6);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .rules-table tr:last-child td { border-bottom: none; }
+    .rules-table tr:hover td { background: rgba(79,135,255,0.03); }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+    }
+    .badge.pass { background: var(--badge-pass); color: var(--badge-pass-text); }
+    .badge.fail { background: var(--badge-fail); color: var(--badge-fail-text); }
+    .badge.caution { background: var(--badge-caution); color: var(--badge-caution-text); }
+
+    /* ── INFO BOX ── */
+    .info-box {
+      background: rgba(79,135,255,0.07);
+      border: 1px solid rgba(79,135,255,0.2);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+    .info-box strong { color: var(--accent); }
+    .warn-box {
+      background: rgba(255,212,59,0.06);
+      border: 1px solid rgba(255,212,59,0.2);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: #d4b500;
+      line-height: 1.6;
+    }
+    .warn-box strong { color: var(--accent3); }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-size: 13px; font-weight: 700;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+      margin-top: 24px;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    /* ── FLOW STEPS ── */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .flow-item {
+      display: flex;
+      gap: 16px;
+      position: relative;
+    }
+    .flow-line {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .flow-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+      color: var(--accent);
+      z-index: 1;
+    }
+    .flow-connector {
+      width: 2px;
+      flex: 1;
+      background: var(--border);
+      min-height: 16px;
+    }
+    .flow-content {
+      padding-bottom: 20px;
+      flex: 1;
+    }
+    .flow-content h4 {
+      font-size: 14px; font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .flow-content p {
+      font-size: 13px; color: var(--text2);
+      line-height: 1.6;
+    }
+
+    /* ── PLATFORM CARDS ── */
+    .platform-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .platform-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .platform-card h4 {
+      font-size: 13px; font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .platform-card ul {
+      list-style: none;
+      font-size: 12.5px;
+      color: var(--text2);
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .platform-card li::before {
+      content: '→ ';
+      color: var(--accent);
+      font-size: 11px;
+    }
+
+    /* ── FAQ ── */
+    .faq-list { display: flex; flex-direction: column; gap: 8px; }
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px;
+      cursor: pointer;
+      font-size: 13.5px; font-weight: 600;
+      color: var(--text);
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .faq-q:hover { background: var(--surface2); }
+    .faq-q .arrow {
+      color: var(--text3);
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+    .faq-item.open .faq-q .arrow { transform: rotate(180deg); }
+    .faq-a {
+      display: none;
+      padding: 0 18px 16px;
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.7;
+      border-top: 1px solid var(--border);
+    }
+    .faq-item.open .faq-a { display: block; padding-top: 14px; }
+
+    /* ── ADMIN MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      justify-content: center; align-items: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      width: min(480px, 90vw);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--text2); margin-bottom: 6px;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-group input:focus, .form-group textarea:focus,
+    .form-group select:focus { border-color: var(--accent); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-group select option { background: var(--surface2); }
+    .modal-actions {
+      display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px;
+    }
+    .btn-cancel, .btn-primary {
+      padding: 8px 18px; border-radius: 7px;
+      font-size: 13px; font-weight: 600;
+      border: none; cursor: pointer; font-family: inherit;
+    }
+    .btn-cancel {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text2);
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #3a6fe8; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 13px;
+      color: var(--text2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      display: flex; align-items: center; gap: 8px;
+      transform: translateY(20px); opacity: 0;
+      transition: all 0.3s;
+      z-index: 999;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { border-color: var(--accent2); }
+    #toast.error { border-color: var(--badge-fail-text); }
+
+    /* ── EDITABLE ── */
+    .editable {
+      position: relative;
+    }
+    .editable:hover::after {
+      content: '✏️';
+      position: absolute;
+      right: 6px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* ── LOADING ── */
+    .loading {
+      display: flex; align-items: center; justify-content: center;
+      height: 200px; color: var(--text3); font-size: 13px;
+      gap: 10px;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* code snippet */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: var(--accent2);
+    }
+
+    ul.guide-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text2);
+    }
+    ul.guide-list li {
+      display: flex; gap: 8px; line-height: 1.5;
+    }
+    ul.guide-list li::before {
+      content: '•';
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-icon">🏷️</div>
+        <div class="brand-text">
+          <h1>버킷플레이스 최저가 수집 가이드</h1>
+          <p>오늘의집 상품 최저가 검수 운영 가이드</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="admin-btn" onclick="toggleAdminMode()">관리자 모드</button>
+        <button id="save-btn" onclick="saveAllChanges()">💾 저장</button>
+      </div>
+    </div>
+    <div class="status-bar">
+      <div class="status-dot"></div>
+      <span id="status-text">실시간 동기화 중</span>
+    </div>
+    <nav id="nav">
+      <div class="tab active" onclick="showSection('overview', this)">개요</div>
+      <div class="tab" onclick="showSection('collection', this)">수집 기준</div>
+      <div class="tab" onclick="showSection('platforms', this)">플랫폼별 기준</div>
+      <div class="tab" onclick="showSection('flow', this)">작업 흐름</div>
+      <div class="tab" onclick="showSection('faq', this)">자주 하는 질문</div>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── OVERVIEW ── -->
+  <section id="section-overview" class="section active">
+    <div class="section-title">업무 개요</div>
+
+    <div class="info-box" id="overview-intro" data-field="overview-intro">
+      <strong>목적:</strong> 오늘의집(버킷플레이스) 타겟 상품의 시장 내 <strong>최저가 정보를 정확히 확인·검증</strong>하는 작업입니다. 각 플랫폼의 동일 옵션 상품 가격을 비교하여 시스템 수집 데이터의 정확성을 판단하고, 필요한 경우 직접 최저가를 산출합니다.
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-row">
+            <span class="step-badge">SCOPE</span>
+            <span class="card-title">작업 범위</span>
+          </div>
+        </div>
+        <ul class="guide-list" id="scope-list" data-field="scope-list">
+          <li>네이버 / 다나와 / 에누리 / 지마켓 카탈로그에 있는 상품</li>
+          <li>쿠팡, 11번가 등 주요 플랫폼의 동일 상품 후보</li>
+          <li>DB에 없는 경우 레포트 작성 (수집 가능 여부 확인)</li>
+          <li>최저가 판단 기준은 적립금 제외한 실 판매가 기준</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-row">
+            <span class="step-badge">RULE</span>
+            <span class="card-title">판단 기준 요약</span>
+          </div>
+        </div>
+        <ul class="guide-list" id="rule-summary" data-field="rule-summary">
+          <li>네이버와 타 스토어 가격 동일 → 네이버를 최저가로 선택</li>
+          <li>가격 다를 경우 → 적립금 제외 실 판매가 기준 최저가 선택</li>
+          <li>네이버 적립금은 최저가 판단 기준에서 제외</li>
+          <li>네이버 포인트는 로그인 시 확인 (포인트 포함 시)</li>
+          <li>쿠팡: 로켓상품 우선, 없으면 최저가 일반상품</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-title">수집 대상 현황</div>
+    <div class="card">
+      <table class="rules-table" id="target-table">
+        <thead>
+          <tr>
+            <th>소스</th>
+            <th>타겟 유형</th>
+            <th>Active Row</th>
+            <th>Distinct Target URL</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>todayshouse</code></td>
+            <td>keyword</td>
+            <td>34,454</td>
+            <td>1,125개</td>
+            <td>주요 수집원</td>
+          </tr>
+          <tr>
+            <td><code>todayshouse</code></td>
+            <td>danawa</td>
+            <td>13,289</td>
+            <td>357개</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>ohouse</code></td>
+            <td>keyword</td>
+            <td>5,573</td>
+            <td>627개</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>todayshouse</code></td>
+            <td>enuri</td>
+            <td>4,837</td>
+            <td>130개</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>todayshouse</code></td>
+            <td>comparison</td>
+            <td>2,485</td>
+            <td>1,379개</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="warn-box">
+      <strong>⚠️ 운영 이슈:</strong> 국가 확장 및 데일리 수집 브랜드 증가로 일 수집량이 2~3만 개까지 증가, 전체 상품을 일주일에 나누어 수집해도 트래픽 초과 상황이 발생하고 있습니다. 수집 타임아웃을 8시간 → 12시간으로 확장 검토 중.
+    </div>
+  </section>
+
+  <!-- ── COLLECTION ── -->
+  <section id="section-collection" class="section">
+    <div class="section-title">수집 개수 기준</div>
+    <div class="card">
+      <table class="rules-table">
+        <thead>
+          <tr>
+            <th>수집 개수</th>
+            <th>작업 방식</th>
+          </tr>
+        </thead>
+        <tbody id="count-rules" data-field="count-rules">
+          <tr>
+            <td><span class="badge fail">0개</span></td>
+            <td>작업 불필요. 수집 후보가 없는 상태이므로 레포트만 작성</td>
+          </tr>
+          <tr>
+            <td><span class="badge caution">1개</span></td>
+            <td>네이버 가격비교에서 <strong>브랜드+상품명</strong>으로 검색하여 확인 필요</td>
+          </tr>
+          <tr>
+            <td><span class="badge pass">1개 이상</span></td>
+            <td>후보 리스트에서 최저가 검증 진행 (동일 상품 여부 먼저 확인)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">최저가 선정 기준</div>
+    <div class="card" id="lowest-price-rules" data-field="lowest-price-rules">
+      <ul class="guide-list">
+        <li>네이버와 타 스토어 가격이 <strong>동일</strong>한 경우 → 네이버를 최저가로 선택</li>
+        <li>가격이 <strong>다른</strong> 경우 → 적립금을 제외한 실 판매가 기준으로 가장 낮은 곳 선택</li>
+        <li><strong>네이버 적립금</strong>은 최저가 판단 기준에서 제외</li>
+        <li>네이버 <strong>포인트</strong>는 로그인해서 확인 (포인트 포함 일 시)</li>
+        <li>쿠팡: <strong>로켓상품 우선</strong>, 없을 시 최저가 일반상품</li>
+      </ul>
+    </div>
+
+    <div class="section-title">쿠폰 적용 제외 기준</div>
+    <div class="card" id="coupon-rules" data-field="coupon-rules">
+      <div class="info-box" style="margin-bottom:0">
+        아래 항목은 최저가 판단 시 <strong>쿠폰 적용 제외</strong> 대상입니다.
+      </div>
+      <br/>
+      <ul class="guide-list">
+        <li>네이버 라운지 전용 쿠폰</li>
+        <li>카드 할인</li>
+        <li>첫구매 쿠폰</li>
+        <li>플랫폼별로 다양한 쿠폰이 있으므로 더블체크 필요</li>
+        <li>쿠폰이 반영된 실 판매가가 기재된 경우: 그 금액으로 최저가 기록</li>
+      </ul>
+    </div>
+
+    <div class="section-title">동일 상품 판별 기준</div>
+    <div class="card" id="same-product-rules" data-field="same-product-rules">
+      <ul class="guide-list">
+        <li><strong>상품명 + 수량 + 용량</strong>이 동일한 상품만 동일 상품으로 간주</li>
+        <li>혼합 세트 구성품이 포함된 경우 → 동일 상품 제외</li>
+        <li>핵심 키워드 누락 시 제외</li>
+        <li>수량/용량 불일치 시 제외</li>
+        <li>고양이모래 무향 ≠ 향 정보가 다른 경우 → no_match 처리가 더 안전</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── PLATFORMS ── -->
+  <section id="section-platforms" class="section">
+    <div class="section-title">플랫폼별 수집 기준</div>
+
+    <div class="platform-grid" id="platform-grid" data-field="platform-grid">
+      <div class="platform-card">
+        <h4>🟢 네이버</h4>
+        <ul>
+          <li>최저가 상품 (1 page, 40개 기준 검색)</li>
+          <li>검색 결과 전체 PDP 들어가서 수집</li>
+          <li>해당 내용 LLM 매칭 후 화면 노출</li>
+          <li>로그인 상태에서 포인트까지 확인</li>
+          <li>낮은가격순 + 적용기준 off = 잘 나옴</li>
+        </ul>
+      </div>
+      <div class="platform-card">
+        <h4>🟡 쿠팡</h4>
+        <ul>
+          <li>로켓상품 우선 선택</li>
+          <li>로켓상품 없을 시 최저가 일반상품</li>
+          <li>쿠팡 target URL 기준 수집</li>
+          <li>HTTP 직접 요청 403 차단 → browser 기반 수집</li>
+          <li>로켓배송 여부 별도 확인 필요</li>
+        </ul>
+      </div>
+      <div class="platform-card">
+        <h4>🔵 다나와 / 에누리</h4>
+        <ul>
+          <li>최저가 상품 (1 page, 40개 기준 검색)</li>
+          <li>카탈로그 기반 동일 상품 판별</li>
+          <li>네이버 가격비교 URL 적합성 확인 필요</li>
+        </ul>
+      </div>
+      <div class="platform-card">
+        <h4>🟠 G마켓 / 11번가</h4>
+        <ul>
+          <li>최저가 상품 (1 page, 40개 기준 검색)</li>
+          <li>삼성에서 제공한 검색어로 조회 후 매칭 상품 찾기</li>
+          <li>카드 할인 정보 수집 시 별도 파서 개발 필요</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-title">수집 제외 대상</div>
+    <div class="card">
+      <table class="rules-table" id="exclude-table" data-field="exclude-table">
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>제외 이유</th>
+            <th>예외 처리</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>식품류 (김치, 샐러드 등)</td>
+            <td>신선도·유통 특성상 가격 변동이 심하고 동일 상품 판별 어려움</td>
+            <td>가공식품은 가능 (예: 해물 누룽지탕 냉동팩)</td>
+          </tr>
+          <tr>
+            <td>옵션별 별도 상품코드 분리 상품 (코스트코)</td>
+            <td>옵션 선택 시 별도 상품코드로 빠져나가는 경우 수집 불가</td>
+            <td>지마켓/옥션의 경우 별도 상품코드로 빠지는 경우만 가능</td>
+          </tr>
+          <tr>
+            <td>구매 수량/시간 제한 상품</td>
+            <td>데일리 2회 구매 가능 이런 식의 제한은 안 됨</td>
+            <td>한 달 주기 정도의 긴 템포럴은 괜찮음</td>
+          </tr>
+          <tr>
+            <td>공식몰 URL (lge.co.kr 등)</td>
+            <td>현재 target_url 관리 대상 아님 (수집 플랫폼 범위 외)</td>
+            <td>추후 범위 확장 시 별도 협의</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── FLOW ── -->
+  <section id="section-flow" class="section">
+    <div class="section-title">작업 흐름 (Step-by-Step)</div>
+
+    <div class="flow" id="flow-steps" data-field="flow-steps">
+      <div class="flow-item">
+        <div class="flow-line">
+          <div class="flow-dot">1</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>타겟 상품 확인</h4>
+          <p>당일 배정된 버킷플레이스 타겟 URL/상품 목록 확인. 행 기준으로 작업 수량이 결정됩니다 (1회차 1,300~1,700개 처리).</p>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-line">
+          <div class="flow-dot">2</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>수집 개수 확인</h4>
+          <p>후보 리스트 수집 개수를 확인합니다. 0개이면 레포트 작성, 1개이면 네이버 가격비교에서 브랜드+상품명으로 검색, 1개 이상이면 후보 리스트에서 최저가 검증 진행.</p>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-line">
+          <div class="flow-dot">3</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>동일 상품 판별</h4>
+          <p>상품명 + 수량 + 용량 기준으로 동일 상품 여부를 판별합니다. 혼합 세트 포함, 핵심 키워드 누락, 수량/용량 불일치 시 제외 처리.</p>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-line">
+          <div class="flow-dot">4</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>최저가 산출</h4>
+          <p>동일 상품으로 판별된 후보들에서 적립금/쿠폰 제외 실 판매가 기준 최저가를 선택. 네이버와 타 스토어가 동일 가격이면 네이버 선택.</p>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-line">
+          <div class="flow-dot">5</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>결과 입력 및 레포트</h4>
+          <p>어드민 작업 툴에 결과 입력. DB에 없는 수집 불가 상품은 레포트 작성하여 DS 관리자에게 전달. 애매한 케이스는 슬랙에 남겨 확인 요청.</p>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-line">
+          <div class="flow-dot">6</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>DS 관리자 최종 교차 검수</h4>
+          <p>DS 관리자가 최종 교차 검수 후 버킷플레이스 측에 전달. All Pass 건에 대해서만 최종 교차 검수 진행 (6:30분경 확인).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">작업 일정</div>
+    <div class="card">
+      <table class="rules-table" id="schedule-table" data-field="schedule-table">
+        <thead>
+          <tr>
+            <th>일정</th>
+            <th>내용</th>
+            <th>인원</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>매주 화요일</td>
+            <td>1회차 최저가 검수 작업 (오후 2시~7시)</td>
+            <td>5명</td>
+          </tr>
+          <tr>
+            <td>4월 15~17일</td>
+            <td>버킷 작업자 일정 확인 (네이버 쇼핑 영향으로 조정)</td>
+            <td>확인 중</td>
+          </tr>
+          <tr>
+            <td>4월 말</td>
+            <td>PoC 최종 마무리 예정</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── FAQ ── -->
+  <section id="section-faq" class="section">
+    <div class="section-title">자주 하는 질문</div>
+
+    <div class="faq-list" id="faq-list">
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>적립금과 포인트를 최저가에 포함해야 하나요?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">
+          <strong>네이버 적립금은 최저가 판단 기준에서 제외합니다.</strong> 네이버 포인트는 로그인해서 확인하고, 포인트 포함 일 시 반영하여 최저가를 판단합니다. 쿠팡의 경우 쿠폰이 반영된 실 판매가가 기재된 경우 그 금액으로 기록합니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>수집 후보가 0개인 경우 어떻게 처리하나요?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">
+          DB에 없는 경우 레포트를 작성합니다. 이후 PoC 기간에 검색 최적화를 미리 해두면 고도화가 가능합니다. 다나와, 에누리, 네이버 카탈로그에 있는 것들에 대해서라도 수집을 시도하고, DB에 없으면 레포트 작성합니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>네이버와 타 스토어 가격이 같을 때 어떤 기준으로 선택하나요?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">
+          <strong>네이버를 최저가로 선택합니다.</strong> 가격이 다른 경우에는 적립금을 제외한 실 판매가 기준으로 가장 낮은 곳을 선택합니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>쿠팡에서 수집이 403 오류로 막히면 어떻게 하나요?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">
+          쿠팡은 단순 HTTP requests 방식은 403으로 차단됩니다. <strong>browser 기반 수집</strong>으로 전환하거나, enhans-scraper 경유 방식을 사용합니다. 직접 요청이 막혔을 때는 브라우저 자동화 기반 수집이 현실적인 대안입니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>코스트코 상품은 어떻게 처리하나요?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">
+          코스트코는 <strong>옵션이 있으면 일단 전부 제외</strong>입니다. 지마켓/옥션의 경우 옵션 선택 시 별도 상품코드로 빠지는 경우만 가능합니다. 옵션이 없는 코스트코 단품은 수집 가능합니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>7% 가구 브랜드데이 할인 쿠폰은 최저가 적용 가능한가요?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">
+          플랫폼별, 상품별로 다양한 쿠폰이 있으므로 더블체크가 필요합니다. 고객과 합의한 기준은: <strong>네이버 라운지 전용 쿠폰, 카드할인, 첫구매 쿠폰은 제외</strong>합니다. 쿠폰이 반영된 실 판매가가 기재되어 있다면 그 금액으로 기록하는 것이 맞습니다. 애매한 특이사항은 슬랙에 공유해주세요.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>식품류 수집 제외 기준은 무엇인가요?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">
+          기본적으로 <strong>김치, 샐러드 등 신선 식품류는 제외</strong>합니다. 단, 가공식품인 경우는 괜찮습니다 (예: 해물 누룽지탕 냉동팩). 동일 상품 판별이 어렵고 유통 특성상 가격 변동이 심한 신선 식품은 제외하는 것이 원칙입니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>수집 배치는 어떤 일정으로 운영하나요?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">
+          현재는 <strong>매일 오전 1시~9시 배치</strong> 형태로 운영됩니다. 중장기적으로는 24시간 상시 동작 형태 전환을 검토 중이며, 이 경우 시간당 수집 모수가 낮아져 더 많은 상품 정보를 효율적으로 수집할 수 있습니다. 전체 상품을 일주일에 나누어 수집하는 방식도 검토 중입니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>애매한 케이스 (pending) 처리 기준은 무엇인가요?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">
+          판단 기준이 불명확한 경우 <strong>pending으로 처리</strong>하고, 슬랙 채널에 케이스를 공유하여 가이드 업데이트를 요청합니다. 예시: 에너지효율등급 등급 판단 기준이 애매한 것들, 청소년보호/성인인증상품의 일반 기준을 벗어나는 상품들은 발견 후 검수 대상으로 추가하는 식으로 사후 처리 가능하지만 사전에 완벽하게 차단하기 어렵습니다.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ── ADMIN MODAL ── -->
+<div class="modal-overlay" id="admin-modal">
+  <div class="modal">
+    <h3>🔐 관리자 인증</h3>
+    <div class="form-group">
+      <label>비밀번호</label>
+      <input type="password" id="admin-password" placeholder="관리자 비밀번호 입력" onkeydown="if(event.key==='Enter') verifyAdmin()" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('admin-modal')">취소</button>
+      <button class="btn-primary" onclick="verifyAdmin()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ 추가 모달 -->
+<div class="modal-overlay" id="faq-modal">
+  <div class="modal">
+    <h3>❓ 자주 하는 질문 추가</h3>
+    <div class="form-group">
+      <label>질문</label>
+      <input type="text" id="faq-q-input" placeholder="질문을 입력하세요" />
+    </div>
+    <div class="form-group">
+      <label>답변</label>
+      <textarea id="faq-a-input" rows="4" placeholder="답변을 입력하세요"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('faq-modal')">취소</button>
+      <button class="btn-primary" onclick="saveFaq()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  const DB_PATH = "bucket_lowest_price_guide/v1";
+  let isAdmin = false;
+  let pendingChanges = {};
+  let fbReady = false;
+
+  // Firebase Realtime Database 초기화
+  function initFirebase() {
+    const { db, ref, set, onValue } = window.__fb;
+    fbReady = true;
+    loadFromFirebase();
+  }
+
+  function updateStatus(msg, live=true) {
+    const el = document.getElementById('status-text');
+    if(el) el.textContent = msg;
+    const dot = document.querySelector('.status-dot');
+    if(dot) dot.style.background = live ? 'var(--accent2)' : 'var(--text3)';
+  }
+
+  // ── TAB ──
+  function showSection(id, tabEl) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    const sec = document.getElementById('section-' + id);
+    if(sec) sec.classList.add('active');
+    if(tabEl) tabEl.classList.add('active');
+    // 편집 모드면 새로 보이는 섹션에도 contentEditable 재적용
+    if(isAdmin) {
+      sec && sec.querySelectorAll('[data-field]').forEach(el => {
+        el.contentEditable = 'true';
+        el.style.outline = '2px solid transparent';
+        el.style.transition = 'outline 0.15s';
+        el.onfocus = () => el.style.outline = '2px solid var(--accent)';
+        el.onblur = () => {
+          el.style.outline = '2px solid transparent';
+          pendingChanges[el.dataset.field] = el.innerHTML;
+        };
+      });
+    }
+  }
+
+  // ── FAQ Toggle ──
+  function toggleFaq(el) {
+    const item = el.closest('.faq-item');
+    item.classList.toggle('open');
+  }
+
+  // ── ADMIN ──
+  function toggleAdminMode() {
+    if(isAdmin) {
+      exitAdmin();
+    } else {
+      document.getElementById('admin-modal').classList.add('show');
+      setTimeout(() => document.getElementById('admin-password').focus(), 100);
+    }
+  }
+
+  function verifyAdmin() {
+    const pw = document.getElementById('admin-password').value;
+    if(pw === 'bucket2024' || pw === 'admin') {
+      isAdmin = true;
+      closeModal('admin-modal');
+      document.getElementById('admin-password').value = '';
+      document.getElementById('admin-btn').textContent = '✅ 관리자';
+      document.getElementById('admin-btn').style.borderColor = 'var(--accent2)';
+      document.getElementById('admin-btn').style.color = 'var(--accent2)';
+      document.getElementById('save-btn').style.display = 'block';
+      enableEditing();
+      showToast('관리자 모드 활성화', 'success');
+    } else {
+      showToast('비밀번호가 틀렸습니다', 'error');
+    }
+  }
+
+  function exitAdmin() {
+    isAdmin = false;
+    document.getElementById('admin-btn').textContent = '관리자 모드';
+    document.getElementById('admin-btn').style.borderColor = '';
+    document.getElementById('admin-btn').style.color = '';
+    document.getElementById('save-btn').style.display = 'none';
+    disableEditing();
+    pendingChanges = {};
+  }
+
+  function enableEditing() {
+    // FAQ 추가 버튼
+    const faqAdd = document.createElement('button');
+    faqAdd.textContent = '+ 질문 추가';
+    faqAdd.id = 'faq-add-btn';
+    faqAdd.style.cssText = `
+      margin-top:12px; padding:8px 16px; border-radius:7px;
+      background:var(--surface2); border:1px dashed var(--accent);
+      color:var(--accent); font-size:13px; font-weight:600;
+      cursor:pointer; font-family:inherit; width:100%;
+    `;
+    faqAdd.onclick = () => document.getElementById('faq-modal').classList.add('show');
+    const faqList = document.getElementById('faq-list');
+    if(faqList) faqList.after(faqAdd);
+
+    // 모든 섹션의 data-field에 contentEditable 적용 (display:none 포함)
+    document.querySelectorAll('[data-field]').forEach(el => {
+      el.contentEditable = 'true';
+      el.style.outline = '2px solid transparent';
+      el.style.transition = 'outline 0.15s';
+      el.onfocus = () => el.style.outline = '2px solid var(--accent)';
+      el.onblur = () => {
+        el.style.outline = '2px solid transparent';
+        pendingChanges[el.dataset.field] = el.innerHTML;
+      };
+    });
+
+    // 현재 활성 섹션 힌트 표시
+    const activeSection = document.querySelector('.section.active');
+    if(activeSection) {
+      activeSection.querySelectorAll('[data-field]').forEach(el => {
+        el.title = '클릭하여 편집';
+      });
+    }
+  }
+
+  function disableEditing() {
+    const btn = document.getElementById('faq-add-btn');
+    if(btn) btn.remove();
+    document.querySelectorAll('[data-field]').forEach(el => {
+      el.contentEditable = 'false';
+      el.style.outline = '';
+    });
+  }
+
+  // ── MODAL ──
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('show');
+  }
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => {
+      if(e.target === m) m.classList.remove('show');
+    });
+  });
+
+  // ── FAQ 저장 ──
+  function saveFaq() {
+    const q = document.getElementById('faq-q-input').value.trim();
+    const a = document.getElementById('faq-a-input').value.trim();
+    if(!q || !a) { showToast('질문과 답변을 모두 입력해주세요', 'error'); return; }
+
+    const list = document.getElementById('faq-list');
+    const item = document.createElement('div');
+    item.className = 'faq-item';
+    item.innerHTML = `
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span>${q}</span>
+        <span class="arrow">▾</span>
+      </div>
+      <div class="faq-a">${a}</div>
+    `;
+    list.appendChild(item);
+
+    saveAllChanges();
+
+    document.getElementById('faq-q-input').value = '';
+    document.getElementById('faq-a-input').value = '';
+    closeModal('faq-modal');
+  }
+
+  function getFaqItems() {
+    return Array.from(document.querySelectorAll('#faq-list .faq-item')).map(item => ({
+      q: item.querySelector('.faq-q span').textContent,
+      a: item.querySelector('.faq-a').innerHTML
+    }));
+  }
+
+  // ── FIREBASE SAVE (Realtime Database) ──
+  function saveAllChanges() {
+    if(!fbReady) { showToast('Firebase 연결 중...', 'error'); return; }
+
+    document.querySelectorAll('[data-field]').forEach(el => {
+      pendingChanges[el.dataset.field] = el.innerHTML;
+    });
+    pendingChanges['faq_items'] = JSON.stringify(getFaqItems());
+
+    const { db, ref, set } = window.__fb;
+    updateStatus('저장 중...');
+    set(ref(db, DB_PATH), pendingChanges)
+      .then(() => {
+        showToast('저장 완료!', 'success');
+        updateStatus('실시간 동기화 중');
+        pendingChanges = {};
+      })
+      .catch(() => {
+        showToast('저장 실패', 'error');
+        updateStatus('저장 실패', false);
+      });
+  }
+
+  // ── FIREBASE LOAD (Realtime Database) ──
+  function loadFromFirebase() {
+    const { db, ref, onValue } = window.__fb;
+    updateStatus('데이터 불러오는 중...');
+    onValue(ref(db, DB_PATH), snap => {
+      const data = snap.val();
+      if(!data) { updateStatus('실시간 동기화 중'); return; }
+
+      Object.keys(data).forEach(key => {
+        if(key === 'faq_items') return;
+        const el = document.querySelector(`[data-field="${key}"]`);
+        if(el) el.innerHTML = data[key];
+      });
+
+      if(data.faq_items) {
+        try {
+          const items = JSON.parse(data.faq_items);
+          const list = document.getElementById('faq-list');
+          if(list && items.length > 0) {
+            list.innerHTML = '';
+            items.forEach(item => {
+              const el = document.createElement('div');
+              el.className = 'faq-item';
+              el.innerHTML = `
+                <div class="faq-q" onclick="toggleFaq(this)">
+                  <span>${item.q}</span>
+                  <span class="arrow">▾</span>
+                </div>
+                <div class="faq-a">${item.a}</div>
+              `;
+              list.appendChild(el);
+            });
+          }
+        } catch(e) {}
+      }
+      updateStatus('실시간 동기화 중');
+    }, () => updateStatus('Firebase 연결 실패', false));
+  }
+
+  // ── TOAST ──
+  function showToast(msg, type='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show ' + type;
+    setTimeout(() => t.className = '', 2800);
+  }
+
+  // ── INIT ──
+  if(window.__fb) initFirebase();
+  else window.addEventListener('firebase-ready', initFirebase, { once: true });
+</script>
+</body>
+</html>

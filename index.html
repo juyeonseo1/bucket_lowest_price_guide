@@ -1215,12 +1215,13 @@
       el.contentEditable = 'false';
       el.style.outline = '';
     });
-    // 블록 컨트롤 제거
-    document.querySelectorAll('.block-controls').forEach(el => el.remove());
+    // 블록/행 컨트롤 전체 제거
+    document.querySelectorAll('.block-controls, .row-del-btn, .faq-del-btn').forEach(el => el.remove());
   }
 
   // ── 블록 컨트롤 (편집/삭제/이동) ──
   function addBlockControls() {
+    // 카드 단위 컨트롤 (위/아래/삭제)
     document.querySelectorAll('.card').forEach(card => {
       if(card.querySelector('.block-controls')) return;
       const ctrl = document.createElement('div');
@@ -1232,6 +1233,52 @@
       `;
       card.appendChild(ctrl);
     });
+
+    // 행(tr) 단위 삭제 버튼
+    document.querySelectorAll('[data-field] tr').forEach(tr => {
+      if(tr.querySelector('.row-del-btn')) return;
+      if(tr.closest('thead')) return; // 헤더 행 제외
+      const td = document.createElement('td');
+      td.style.cssText = 'width:28px;padding:0;text-align:center;vertical-align:middle;';
+      td.innerHTML = `<button class="row-del-btn block-btn del" title="행 삭제" onclick="deleteRow(this)" style="width:20px;height:20px;font-size:10px;opacity:0.4;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4">✕</button>`;
+      tr.appendChild(td);
+    });
+
+    // 리스트 항목(li) 단위 삭제 버튼
+    document.querySelectorAll('[data-field] li').forEach(li => {
+      if(li.querySelector('.row-del-btn')) return;
+      const btn = document.createElement('button');
+      btn.className = 'row-del-btn block-btn del';
+      btn.title = '항목 삭제';
+      btn.textContent = '✕';
+      btn.style.cssText = 'width:18px;height:18px;font-size:10px;margin-left:6px;opacity:0.4;flex-shrink:0;';
+      btn.onmouseover = () => btn.style.opacity = 1;
+      btn.onmouseout = () => btn.style.opacity = 0.4;
+      btn.onclick = () => deleteRow(btn);
+      li.style.display = 'flex';
+      li.style.alignItems = 'center';
+      li.appendChild(btn);
+    });
+
+    // FAQ 항목 삭제 버튼
+    document.querySelectorAll('.faq-item').forEach(item => {
+      if(item.querySelector('.faq-del-btn')) return;
+      const btn = document.createElement('button');
+      btn.className = 'faq-del-btn block-btn del';
+      btn.title = 'FAQ 삭제';
+      btn.textContent = '✕';
+      btn.style.cssText = 'width:22px;height:22px;font-size:11px;position:absolute;right:8px;top:50%;transform:translateY(-50%);opacity:0.4;';
+      btn.onmouseover = () => btn.style.opacity = 1;
+      btn.onmouseout = () => btn.style.opacity = 0.4;
+      btn.onclick = () => { item.remove(); saveAllChanges(); };
+      const q = item.querySelector('.faq-q');
+      if(q) { q.style.position = 'relative'; q.appendChild(btn); }
+    });
+  }
+
+  function deleteRow(btn) {
+    const row = btn.closest('tr') || btn.closest('li');
+    if(row) { row.remove(); saveAllChanges(); }
   }
 
   function moveBlock(btn, dir) {
@@ -1242,11 +1289,13 @@
     } else if(dir === 'down' && card.nextElementSibling) {
       parent.insertBefore(card.nextElementSibling, card);
     }
+    saveAllChanges();
   }
 
   function deleteBlock(btn) {
     if(!confirm('이 블록을 삭제할까요?')) return;
     btn.closest('.card').remove();
+    saveAllChanges();
   }
 
   // ── MODAL ──
@@ -1295,10 +1344,16 @@
   async function saveAllChanges() {
     if(!fbReady) { showToast('Firebase 연결 중...', 'error'); return; }
 
+    // data-field 개별 요소 저장
     document.querySelectorAll('[data-field]').forEach(el => {
       pendingChanges[el.dataset.field] = el.innerHTML;
     });
     pendingChanges['faq_items'] = JSON.stringify(getFaqItems());
+
+    // 섹션 전체 구조 저장 (블록 삭제/이동 반영)
+    document.querySelectorAll('.section').forEach(sec => {
+      pendingChanges['section_' + sec.id] = sec.innerHTML;
+    });
 
     const { db, ref, set } = window.__fb;
     updateStatus('저장 중...');
@@ -1326,32 +1381,45 @@
       const data = snap.val();
       if(!data) { updateStatus('실시간 동기화 중'); return; }
 
-      Object.keys(data).forEach(key => {
-        if(key === 'faq_items') return;
-        const el = document.querySelector(`[data-field="${key}"]`);
-        if(el) el.innerHTML = data[key];
+      // 섹션 전체 구조 복원 (블록 삭제/이동 포함)
+      let sectionRestored = false;
+      document.querySelectorAll('.section').forEach(sec => {
+        const key = 'section_' + sec.id;
+        if(data[key]) {
+          sec.innerHTML = data[key];
+          sectionRestored = true;
+        }
       });
 
-      if(data.faq_items) {
-        try {
-          const items = JSON.parse(data.faq_items);
-          const list = document.getElementById('faq-list');
-          if(list && items.length > 0) {
-            list.innerHTML = '';
-            items.forEach(item => {
-              const el = document.createElement('div');
-              el.className = 'faq-item';
-              el.innerHTML = `
-                <div class="faq-q" onclick="toggleFaq(this)">
-                  <span>${item.q}</span>
-                  <span class="arrow">▾</span>
-                </div>
-                <div class="faq-a">${item.a}</div>
-              `;
-              list.appendChild(el);
-            });
-          }
-        } catch(e) {}
+      // 섹션 구조가 없으면 개별 data-field 복원
+      if(!sectionRestored) {
+        Object.keys(data).forEach(key => {
+          if(key.startsWith('section_') || key === 'faq_items') return;
+          const el = document.querySelector(`[data-field="${key}"]`);
+          if(el) el.innerHTML = data[key];
+        });
+
+        if(data.faq_items) {
+          try {
+            const items = JSON.parse(data.faq_items);
+            const list = document.getElementById('faq-list');
+            if(list && items.length > 0) {
+              list.innerHTML = '';
+              items.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'faq-item';
+                el.innerHTML = `
+                  <div class="faq-q" onclick="toggleFaq(this)">
+                    <span>${item.q}</span>
+                    <span class="arrow">▾</span>
+                  </div>
+                  <div class="faq-a">${item.a}</div>
+                `;
+                list.appendChild(el);
+              });
+            }
+          } catch(e) {}
+        }
       }
       updateStatus('실시간 동기화 중');
     }, () => updateStatus('Firebase 연결 실패', false));

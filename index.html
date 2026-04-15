@@ -633,7 +633,7 @@
             <th>비고</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="target-table-body" data-field="target-table-body">
           <tr>
             <td><code>todayshouse</code></td>
             <td>keyword</td>
@@ -673,7 +673,7 @@
       </table>
     </div>
 
-    <div class="warn-box">
+    <div class="warn-box" id="warn-ops" data-field="warn-ops">
       <strong>⚠️ 운영 이슈:</strong> 국가 확장 및 데일리 수집 브랜드 증가로 일 수집량이 2~3만 개까지 증가, 전체 상품을 일주일에 나누어 수집해도 트래픽 초과 상황이 발생하고 있습니다. 수집 타임아웃을 8시간 → 12시간으로 확장 검토 중.
     </div>
   </section>
@@ -708,7 +708,7 @@
 
     <div class="section-title">최저가 선정 기준</div>
     <div class="card" id="lowest-price-rules" data-field="lowest-price-rules">
-      <ul class="guide-list">
+      <ul class="guide-list" id="lowest-price-list" data-field="lowest-price-list">
         <li>네이버와 타 스토어 가격이 <strong>동일</strong>한 경우 → 네이버를 최저가로 선택</li>
         <li>가격이 <strong>다른</strong> 경우 → 적립금을 제외한 실 판매가 기준으로 가장 낮은 곳 선택</li>
         <li><strong>네이버 적립금</strong>은 최저가 판단 기준에서 제외</li>
@@ -719,11 +719,11 @@
 
     <div class="section-title">쿠폰 적용 제외 기준</div>
     <div class="card" id="coupon-rules" data-field="coupon-rules">
-      <div class="info-box" style="margin-bottom:0">
+      <div class="info-box" id="coupon-info" data-field="coupon-info" style="margin-bottom:0">
         아래 항목은 최저가 판단 시 <strong>쿠폰 적용 제외</strong> 대상입니다.
       </div>
       <br/>
-      <ul class="guide-list">
+      <ul class="guide-list" id="coupon-list" data-field="coupon-list">
         <li>네이버 라운지 전용 쿠폰</li>
         <li>카드 할인</li>
         <li>첫구매 쿠폰</li>
@@ -734,7 +734,7 @@
 
     <div class="section-title">동일 상품 판별 기준</div>
     <div class="card" id="same-product-rules" data-field="same-product-rules">
-      <ul class="guide-list">
+      <ul class="guide-list" id="same-product-list" data-field="same-product-list">
         <li><strong>상품명 + 수량 + 용량</strong>이 동일한 상품만 동일 상품으로 간주</li>
         <li>혼합 세트 구성품이 포함된 경우 → 동일 상품 제외</li>
         <li>핵심 키워드 누락 시 제외</li>
@@ -797,7 +797,7 @@
             <th>예외 처리</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="exclude-table-body" data-field="exclude-table-body">
           <tr>
             <td>식품류 (김치, 샐러드 등)</td>
             <td>신선도·유통 특성상 가격 변동이 심하고 동일 상품 판별 어려움</td>
@@ -900,7 +900,7 @@
             <th>인원</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="schedule-table-body" data-field="schedule-table-body">
           <tr>
             <td>매주 화요일</td>
             <td>1회차 최저가 검수 작업 (오후 2시~7시)</td>
@@ -925,7 +925,7 @@
   <section id="section-faq" class="section">
     <div class="section-title">자주 하는 질문</div>
 
-    <div class="faq-list" id="faq-list">
+    <div class="faq-list" id="faq-list" data-field="faq-list">
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
@@ -1240,13 +1240,47 @@
     });
     pendingChanges['faq_items'] = JSON.stringify(getFaqItems());
 
-    const { db, ref, set } = window.__fb;
+    const { db, ref, set, onValue } = window.__fb;
     updateStatus('저장 중...');
     set(ref(db, DB_PATH), pendingChanges)
       .then(() => {
-        showToast('저장 완료!', 'success');
-        updateStatus('실시간 동기화 중');
+        showToast('저장 완료! GitHub 업데이트 중...', 'success');
+        updateStatus('GitHub 배포 중...');
         pendingChanges = {};
+        // GH_TOKEN을 Firebase에서 읽어와서 GitHub Actions 트리거
+        return new Promise((resolve, reject) => {
+          onValue(ref(db, 'config/gh_token'), snap => {
+            const token = snap.val();
+            if(token) resolve(token);
+            else reject('토큰 없음');
+          }, { onlyOnce: true });
+        });
+      })
+      .then(token => {
+        const htmlContent = document.documentElement.outerHTML;
+        return fetch('https://api.github.com/repos/juyeonseo1/bucket_lowest_price_guide/dispatches', {
+          method: 'POST',
+          headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            event_type: 'firebase-update',
+            client_payload: {
+              content: htmlContent
+            }
+          })
+        });
+      })
+      .then(res => {
+        if(res.status === 204) {
+          showToast('✅ GitHub 배포 완료!', 'success');
+          updateStatus('실시간 동기화 중');
+        } else {
+          showToast('GitHub 배포 실패 (저장은 됨)', 'error');
+          updateStatus('실시간 동기화 중');
+        }
       })
       .catch(() => {
         showToast('저장 실패', 'error');

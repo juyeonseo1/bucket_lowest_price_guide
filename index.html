@@ -1244,15 +1244,15 @@
     updateStatus('저장 중...');
     set(ref(db, DB_PATH), pendingChanges)
       .then(() => {
-        showToast('저장 완료! GitHub 업데이트 중...', 'success');
+        showToast('Firebase 저장 완료! GitHub 배포 중...', 'success');
         updateStatus('GitHub 배포 중...');
         pendingChanges = {};
-        // GH_TOKEN을 Firebase에서 읽어와서 GitHub Actions 트리거
         return new Promise((resolve, reject) => {
           onValue(ref(db, 'config/gh_token'), snap => {
             const token = snap.val();
+            console.log('토큰 읽기 결과:', token ? '성공' : '없음');
             if(token) resolve(token);
-            else reject('토큰 없음');
+            else reject('토큰 없음 - Firebase config/gh_token 확인 필요');
           }, { onlyOnce: true });
         });
       })
@@ -1282,8 +1282,9 @@
           updateStatus('실시간 동기화 중');
         }
       })
-      .catch(() => {
-        showToast('저장 실패', 'error');
+      .catch((err) => {
+        console.error('GitHub 트리거 오류:', err);
+        showToast('GitHub 배포 실패: ' + (err || '알 수 없는 오류'), 'error');
         updateStatus('저장 실패', false);
       });
   }

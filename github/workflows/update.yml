@@ -11,14 +11,59 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GH_TOKEN }}
-      
-      - name: Update index.html content
+
+      - name: Install node-fetch
+        run: npm install node-fetch@2
+
+      - name: Fetch Firebase data and update index.html
         env:
-          CONTENT: ${{ github.event.client_payload.content }}
+          FIREBASE_URL: https://bucket-lowest-price-guide-default-rtdb.firebaseio.com/bucket_lowest_price_guide/v1.json
         run: |
-          echo "$CONTENT" > index.html
+          node << 'EOF'
+          const fetch = require('node-fetch');
+          const fs = require('fs');
+
+          async function main() {
+            // Firebase에서 데이터 읽기
+            const res = await fetch(process.env.FIREBASE_URL);
+            const data = await res.json();
+            if(!data) { console.log('Firebase 데이터 없음'); return; }
+
+            // 현재 index.html 읽기
+            let html = fs.readFileSync('index.html', 'utf8');
+
+            // section_ 키가 있으면 섹션 전체 교체
+            const sectionKeys = Object.keys(data).filter(k => k.startsWith('section_'));
+            if(sectionKeys.length > 0) {
+              sectionKeys.forEach(key => {
+                const sectionId = key.replace('section_', '');
+                const content = data[key];
+                // section 태그 내용 교체
+                const regex = new RegExp(`(<section[^>]+id="${sectionId}"[^>]*>)([\s\S]*?)(</section>)`, 'i');
+                html = html.replace(regex, `$1${content}$3`);
+              });
+            } else {
+              // 개별 data-field 교체
+              Object.keys(data).forEach(key => {
+                if(key === 'faq_items' || key.startsWith('section_')) return;
+                const content = data[key];
+                // data-field 속성을 가진 요소의 innerHTML 교체
+                const regex = new RegExp(`(data-field="${key}"[^>]*>)([\s\S]*?)(<\/[^>]+>)(?=\s*<\/[^>]*>|\s*<div|\s*<section|\s*$)`, 'i');
+                html = html.replace(regex, `$1${content}$3`);
+              });
+            }
+
+            fs.writeFileSync('index.html', html);
+            console.log('index.html 업데이트 완료');
+          }
+
+          main().catch(console.error);
+          EOF
+
+      - name: Commit and push
+        run: |
           git config user.name "guide-bot"
           git config user.email "bot@guide.com"
           git add index.html
-          git diff --staged --quiet || git commit -m "Auto-update guide content"
+          git diff --staged --quiet || git commit -m "Auto-update guide content from Firebase"
           git push

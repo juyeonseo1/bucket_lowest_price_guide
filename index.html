@@ -1352,7 +1352,7 @@
 
     // 섹션 전체 구조 저장 (블록 삭제/이동 반영)
     document.querySelectorAll('.section').forEach(sec => {
-      pendingChanges['section_' + sec.id] = sec.innerHTML;
+      const skey = 'sec_' + sec.id.replace('section-', ''); pendingChanges[skey] = sec.innerHTML;
     });
 
     const { db, ref, set } = window.__fb;
@@ -1362,8 +1362,7 @@
       pendingChanges = {};
       showToast('Firebase 저장 완료! GitHub 배포 중...', 'success', 8000);
       updateStatus('GitHub 배포 중...');
-      const htmlContent = document.documentElement.outerHTML;
-      await triggerGitHubActions(htmlContent);
+      await triggerGitHubActions();
       showToast('✅ GitHub 배포 완료! 1분 후 반영돼요', 'success', 5000);
       updateStatus('실시간 동기화 중');
     } catch(err) {
@@ -1384,7 +1383,7 @@
       // 섹션 전체 구조 복원 (블록 삭제/이동 포함)
       let sectionRestored = false;
       document.querySelectorAll('.section').forEach(sec => {
-        const key = 'section_' + sec.id;
+        const key = 'sec_' + sec.id.replace('section-', '');
         if(data[key]) {
           sec.innerHTML = data[key];
           sectionRestored = true;
@@ -1394,7 +1393,7 @@
       // 섹션 구조가 없으면 개별 data-field 복원
       if(!sectionRestored) {
         Object.keys(data).forEach(key => {
-          if(key.startsWith('section_') || key === 'faq_items') return;
+          if(key.startsWith('sec_') || key === 'faq_items') return;
           const el = document.querySelector(`[data-field="${key}"]`);
           if(el) el.innerHTML = data[key];
         });
@@ -1435,12 +1434,12 @@
   }
 
   // ── GITHUB ACTIONS 트리거 ──
-  async function triggerGitHubActions(htmlContent) {
+  async function triggerGitHubActions() {
     const { db, ref, onValue } = window.__fb;
     return new Promise((resolve, reject) => {
       onValue(ref(db, 'config/gh_token'), async snap => {
         const token = snap.val();
-        console.log('gh_token 읽기:', token ? '성공 (길이:' + token.length + ')' : '없음');
+        console.log('gh_token 읽기:', token ? '성공' : '없음');
         if(!token) { reject('토큰 없음'); return; }
         try {
           const res = await fetch('https://api.github.com/repos/juyeonseo1/bucket_lowest_price_guide/dispatches', {
@@ -1451,8 +1450,7 @@
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              event_type: 'firebase-update',
-              client_payload: { content: htmlContent }
+              event_type: 'firebase-update'
             })
           });
           console.log('GitHub API 응답 상태:', res.status);

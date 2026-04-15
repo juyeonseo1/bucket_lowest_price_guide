@@ -183,6 +183,31 @@
 
     /* ── CARDS ── */
     .card {
+      position: relative;
+    }
+    .card:hover .block-controls { opacity: 1; }
+    .block-controls {
+      position: absolute;
+      top: 8px; right: 8px;
+      display: flex; gap: 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 10;
+    }
+    .block-btn {
+      width: 26px; height: 26px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text2);
+      font-size: 12px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .block-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .block-btn.del:hover { background: var(--badge-fail-text); border-color: var(--badge-fail-text); }
+    .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -1098,6 +1123,7 @@
           pendingChanges[el.dataset.field] = el.innerHTML;
         };
       });
+      addBlockControls();
     }
   }
 
@@ -1178,6 +1204,8 @@
         el.title = '클릭하여 편집';
       });
     }
+    // 블록 컨트롤 추가
+    addBlockControls();
   }
 
   function disableEditing() {
@@ -1187,6 +1215,38 @@
       el.contentEditable = 'false';
       el.style.outline = '';
     });
+    // 블록 컨트롤 제거
+    document.querySelectorAll('.block-controls').forEach(el => el.remove());
+  }
+
+  // ── 블록 컨트롤 (편집/삭제/이동) ──
+  function addBlockControls() {
+    document.querySelectorAll('.card').forEach(card => {
+      if(card.querySelector('.block-controls')) return;
+      const ctrl = document.createElement('div');
+      ctrl.className = 'block-controls';
+      ctrl.innerHTML = `
+        <button class="block-btn" title="위로" onclick="moveBlock(this,'up')">↑</button>
+        <button class="block-btn" title="아래로" onclick="moveBlock(this,'down')">↓</button>
+        <button class="block-btn del" title="삭제" onclick="deleteBlock(this)">✕</button>
+      `;
+      card.appendChild(ctrl);
+    });
+  }
+
+  function moveBlock(btn, dir) {
+    const card = btn.closest('.card');
+    const parent = card.parentElement;
+    if(dir === 'up' && card.previousElementSibling) {
+      parent.insertBefore(card, card.previousElementSibling);
+    } else if(dir === 'down' && card.nextElementSibling) {
+      parent.insertBefore(card.nextElementSibling, card);
+    }
+  }
+
+  function deleteBlock(btn) {
+    if(!confirm('이 블록을 삭제할까요?')) return;
+    btn.closest('.card').remove();
   }
 
   // ── MODAL ──
@@ -1232,7 +1292,7 @@
   }
 
   // ── FIREBASE SAVE (Realtime Database) ──
-  function saveAllChanges() {
+  async function saveAllChanges() {
     if(!fbReady) { showToast('Firebase 연결 중...', 'error'); return; }
 
     document.querySelectorAll('[data-field]').forEach(el => {
@@ -1240,53 +1300,22 @@
     });
     pendingChanges['faq_items'] = JSON.stringify(getFaqItems());
 
-    const { db, ref, set, onValue } = window.__fb;
+    const { db, ref, set } = window.__fb;
     updateStatus('저장 중...');
-    set(ref(db, DB_PATH), pendingChanges)
-      .then(() => {
-        showToast('Firebase 저장 완료! GitHub 배포 중...', 'success');
-        updateStatus('GitHub 배포 중...');
-        pendingChanges = {};
-        return new Promise((resolve, reject) => {
-          onValue(ref(db, 'config/gh_token'), snap => {
-            const token = snap.val();
-            console.log('토큰 읽기 결과:', token ? '성공' : '없음');
-            if(token) resolve(token);
-            else reject('토큰 없음 - Firebase config/gh_token 확인 필요');
-          }, { onlyOnce: true });
-        });
-      })
-      .then(token => {
-        const htmlContent = document.documentElement.outerHTML;
-        return fetch('https://api.github.com/repos/juyeonseo1/bucket_lowest_price_guide/dispatches', {
-          method: 'POST',
-          headers: {
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            event_type: 'firebase-update',
-            client_payload: {
-              content: htmlContent
-            }
-          })
-        });
-      })
-      .then(res => {
-        if(res.status === 204) {
-          showToast('✅ GitHub 배포 완료!', 'success');
-          updateStatus('실시간 동기화 중');
-        } else {
-          showToast('GitHub 배포 실패 (저장은 됨)', 'error');
-          updateStatus('실시간 동기화 중');
-        }
-      })
-      .catch((err) => {
-        console.error('GitHub 트리거 오류:', err);
-        showToast('GitHub 배포 실패: ' + (err || '알 수 없는 오류'), 'error');
-        updateStatus('저장 실패', false);
-      });
+    try {
+      await set(ref(db, DB_PATH), pendingChanges);
+      pendingChanges = {};
+      showToast('Firebase 저장 완료! GitHub 배포 중...', 'success', 8000);
+      updateStatus('GitHub 배포 중...');
+      const htmlContent = document.documentElement.outerHTML;
+      await triggerGitHubActions(htmlContent);
+      showToast('✅ GitHub 배포 완료! 1분 후 반영돼요', 'success', 5000);
+      updateStatus('실시간 동기화 중');
+    } catch(err) {
+      console.error('오류:', err);
+      showToast('오류: ' + err, 'error', 6000);
+      updateStatus('오류 발생', false);
+    }
   }
 
   // ── FIREBASE LOAD (Realtime Database) ──
@@ -1329,11 +1358,46 @@
   }
 
   // ── TOAST ──
-  function showToast(msg, type='') {
+  function showToast(msg, type='', duration=3000) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.className = 'show ' + type;
-    setTimeout(() => t.className = '', 2800);
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.className = '', duration);
+  }
+
+  // ── GITHUB ACTIONS 트리거 ──
+  async function triggerGitHubActions(htmlContent) {
+    const { db, ref, onValue } = window.__fb;
+    return new Promise((resolve, reject) => {
+      onValue(ref(db, 'config/gh_token'), async snap => {
+        const token = snap.val();
+        console.log('gh_token 읽기:', token ? '성공 (길이:' + token.length + ')' : '없음');
+        if(!token) { reject('토큰 없음'); return; }
+        try {
+          const res = await fetch('https://api.github.com/repos/juyeonseo1/bucket_lowest_price_guide/dispatches', {
+            method: 'POST',
+            headers: {
+              'Authorization': `token ${token}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_type: 'firebase-update',
+              client_payload: { content: htmlContent }
+            })
+          });
+          console.log('GitHub API 응답 상태:', res.status);
+          if(res.status === 204) resolve('성공');
+          else {
+            const text = await res.text();
+            reject('GitHub API 오류 ' + res.status + ': ' + text);
+          }
+        } catch(e) {
+          reject('fetch 오류: ' + e.message);
+        }
+      }, { onlyOnce: true });
+    });
   }
 
   // ── INIT ──

@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html><html lang="ko"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>버킷플레이스 최저가 수집 가이드</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 
   <!-- Firebase SDK -->
   <script type="module">
@@ -622,12 +620,7 @@
             <span class="card-title">작업 범위</span>
           </div>
         </div>
-        <ul class="guide-list" id="scope-list" data-field="scope-list">
-          <li>네이버 / 다나와 / 에누리 / 지마켓 카탈로그에 있는 상품</li>
-          <li>쿠팡, 11번가 등 주요 플랫폼의 동일 상품 후보</li>
-          <li>DB에 없는 경우 레포트 작성 (수집 가능 여부 확인)</li>
-          <li>최저가 판단 기준은 적립금 제외한 실 판매가 기준</li>
-        </ul>
+        <ul class="guide-list" id="scope-list" data-field="scope-list">- 매일 '작업 대상'에 업데이트 되는 내용하고 본인의 범위 확인 후 작업</ul>
       </div>
       <div class="card">
         <div class="card-header">
@@ -637,11 +630,10 @@
           </div>
         </div>
         <ul class="guide-list" id="rule-summary" data-field="rule-summary">
-          <li>네이버와 타 스토어 가격 동일 → 네이버를 최저가로 선택</li>
-          <li>가격 다를 경우 → 적립금 제외 실 판매가 기준 최저가 선택</li>
-          <li>네이버 적립금은 최저가 판단 기준에서 제외</li>
-          <li>네이버 포인트는 로그인 시 확인 (포인트 포함 시)</li>
-          <li>쿠팡: 로켓상품 우선, 없으면 최저가 일반상품</li>
+          <li style="display: flex; align-items: center;">네이버와 타 스토어 가격 동일 → 네이버를 최저가로 선택<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+          <li style="display: flex; align-items: center;">가격 다를 경우 → 적립금 제외 실 판매가 기준 최저가 선택<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+          <li style="display: flex; align-items: center;">네이버 적립금은 최저가 판단 기준에서 제외<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+          <li style="display: flex; align-items: center;">네이버 포인트는 로그인 시 확인 (포인트 포함 시)<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
         </ul>
       </div>
     </div>
@@ -698,9 +690,7 @@
       </table>
     </div>
 
-    <div class="warn-box" id="warn-ops" data-field="warn-ops">
-      <strong>⚠️ 운영 이슈:</strong> 국가 확장 및 데일리 수집 브랜드 증가로 일 수집량이 2~3만 개까지 증가, 전체 상품을 일주일에 나누어 수집해도 트래픽 초과 상황이 발생하고 있습니다. 수집 타임아웃을 8시간 → 12시간으로 확장 검토 중.
-    </div>
+    <div class="warn-box" id="warn-ops" data-field="warn-ops"><br></div>
   </section>
 
   <!-- ── COLLECTION ── -->
@@ -717,56 +707,66 @@
         <tbody id="count-rules" data-field="count-rules">
           <tr>
             <td><span class="badge fail">0개</span></td>
-            <td>작업 불필요. 수집 후보가 없는 상태이므로 레포트만 작성</td>
-          </tr>
+            <td>작업 불필요.&nbsp;</td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"><button class="row-del-btn block-btn del" title="행 삭제" onclick="deleteRow(this)" style="width:20px;height:20px;font-size:10px;opacity:0.4;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4">✕</button></td></tr>
           <tr>
-            <td><span class="badge caution">1개</span></td>
+            <td><span class="badge caution">5개 미만</span></td>
             <td>네이버 가격비교에서 <strong>브랜드+상품명</strong>으로 검색하여 확인 필요</td>
-          </tr>
+          <td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"><button class="row-del-btn block-btn del" title="행 삭제" onclick="deleteRow(this)" style="width:20px;height:20px;font-size:10px;opacity:0.4;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4">✕</button></td></tr>
           <tr>
-            <td><span class="badge pass">1개 이상</span></td>
+            <td><span class="badge pass">5개 이상</span></td>
             <td>후보 리스트에서 최저가 검증 진행 (동일 상품 여부 먼저 확인)</td>
-          </tr>
+          <td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"><button class="row-del-btn block-btn del" title="행 삭제" onclick="deleteRow(this)" style="width:20px;height:20px;font-size:10px;opacity:0.4;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4">✕</button></td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="section-title">최저가 선정 기준</div>
     <div class="card" id="lowest-price-rules" data-field="lowest-price-rules">
-      <ul class="guide-list" id="lowest-price-list" data-field="lowest-price-list">
-        <li>네이버와 타 스토어 가격이 <strong>동일</strong>한 경우 → 네이버를 최저가로 선택</li>
-        <li>가격이 <strong>다른</strong> 경우 → 적립금을 제외한 실 판매가 기준으로 가장 낮은 곳 선택</li>
-        <li><strong>네이버 적립금</strong>은 최저가 판단 기준에서 제외</li>
-        <li>네이버 <strong>포인트</strong>는 로그인해서 확인 (포인트 포함 일 시)</li>
-        <li>쿠팡: <strong>로켓상품 우선</strong>, 없을 시 최저가 일반상품</li>
+      <ul class="guide-list">
+        <li style="display: flex; align-items: center;">네이버와 타 스토어 가격이 <strong>동일</strong>한 경우 → 네이버를 최저가로 선택<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        <li style="display: flex; align-items: center;">가격이 <strong>다른</strong> 경우 → 적립금을 제외한 실 판매가 기준으로 가장 낮은 곳 선택<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        <li style="display: flex; align-items: center;"><strong>네이버 적립금</strong>은 최저가 판단 기준에서 제외<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        <li style="display: flex; align-items: center;">네이버 <strong>포인트</strong>는 로그인해서 확인 (포인트 포함 일 시)<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
       </ul>
-    </div>
+    <div class="block-controls">
+        <button class="block-btn" title="위로" onclick="moveBlock(this,'up')">↑</button>
+        <button class="block-btn" title="아래로" onclick="moveBlock(this,'down')">↓</button>
+        <button class="block-btn del" title="삭제" onclick="deleteBlock(this)">✕</button>
+      </div></div>
 
     <div class="section-title">쿠폰 적용 제외 기준</div>
     <div class="card" id="coupon-rules" data-field="coupon-rules">
-      <div class="info-box" id="coupon-info" data-field="coupon-info" style="margin-bottom:0">
+      <div class="info-box" style="margin-bottom:0">
         아래 항목은 최저가 판단 시 <strong>쿠폰 적용 제외</strong> 대상입니다.
       </div>
-      <br/>
-      <ul class="guide-list" id="coupon-list" data-field="coupon-list">
-        <li>네이버 라운지 전용 쿠폰</li>
-        <li>카드 할인</li>
-        <li>첫구매 쿠폰</li>
-        <li>플랫폼별로 다양한 쿠폰이 있으므로 더블체크 필요</li>
-        <li>쿠폰이 반영된 실 판매가가 기재된 경우: 그 금액으로 최저가 기록</li>
+      <br>
+      <ul class="guide-list">
+        <li style="display: flex; align-items: center;">네이버 라운지 전용 쿠폰<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        <li style="display: flex; align-items: center;">카드 할인<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        <li style="display: flex; align-items: center;">첫구매 쿠폰<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        <li style="display: flex; align-items: center;">플랫폼별로 다양한 쿠폰이 있으므로 더블체크 필요<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        <li style="display: flex; align-items: center;">쿠폰이 반영된 실 판매가가 기재된 경우: 그 금액으로 최저가 기록<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
       </ul>
-    </div>
+    <div class="block-controls">
+        <button class="block-btn" title="위로" onclick="moveBlock(this,'up')">↑</button>
+        <button class="block-btn" title="아래로" onclick="moveBlock(this,'down')">↓</button>
+        <button class="block-btn del" title="삭제" onclick="deleteBlock(this)">✕</button>
+      </div></div>
 
     <div class="section-title">동일 상품 판별 기준</div>
     <div class="card" id="same-product-rules" data-field="same-product-rules">
-      <ul class="guide-list" id="same-product-list" data-field="same-product-list">
-        <li><strong>상품명 + 수량 + 용량</strong>이 동일한 상품만 동일 상품으로 간주</li>
-        <li>혼합 세트 구성품이 포함된 경우 → 동일 상품 제외</li>
-        <li>핵심 키워드 누락 시 제외</li>
-        <li>수량/용량 불일치 시 제외</li>
-        <li>고양이모래 무향 ≠ 향 정보가 다른 경우 → no_match 처리가 더 안전</li>
+      <ul class="guide-list">
+        <li style="display: flex; align-items: center;"><strong>상품명 + 수량 + 용량</strong>이 동일한 상품만 동일 상품으로 간주<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        <li style="display: flex; align-items: center;">혼합 세트 구성품이 포함된 경우 → 동일 상품 제외<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        <li style="display: flex; align-items: center;">핵심 키워드 누락 시 제외<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        <li style="display: flex; align-items: center;">수량/용량 불일치 시 제외<button class="row-del-btn block-btn del" title="항목 삭제" style="width: 18px; height: 18px; font-size: 10px; margin-left: 6px; opacity: 0.4; flex-shrink: 0;">✕</button></li>
+        
       </ul>
-    </div>
+    <div class="block-controls">
+        <button class="block-btn" title="위로" onclick="moveBlock(this,'up')">↑</button>
+        <button class="block-btn" title="아래로" onclick="moveBlock(this,'down')">↓</button>
+        <button class="block-btn del" title="삭제" onclick="deleteBlock(this)">✕</button>
+      </div></div>
   </section>
 
   <!-- ── PLATFORMS ── -->
@@ -775,40 +775,9 @@
 
     <div class="platform-grid" id="platform-grid" data-field="platform-grid">
       <div class="platform-card">
-        <h4>🟢 네이버</h4>
-        <ul>
-          <li>최저가 상품 (1 page, 40개 기준 검색)</li>
-          <li>검색 결과 전체 PDP 들어가서 수집</li>
-          <li>해당 내용 LLM 매칭 후 화면 노출</li>
-          <li>로그인 상태에서 포인트까지 확인</li>
-          <li>낮은가격순 + 적용기준 off = 잘 나옴</li>
-        </ul>
-      </div>
+        <h4>- 오늘의 집 &lt;- &gt; 네이버 가격비교에서 검색하여 비교</h4><div>- 네이버 가격비교에 나오는 실제 판매 플랫폼의 정보를 가져온다.&nbsp;</div></div>
       <div class="platform-card">
-        <h4>🟡 쿠팡</h4>
-        <ul>
-          <li>로켓상품 우선 선택</li>
-          <li>로켓상품 없을 시 최저가 일반상품</li>
-          <li>쿠팡 target URL 기준 수집</li>
-          <li>HTTP 직접 요청 403 차단 → browser 기반 수집</li>
-          <li>로켓배송 여부 별도 확인 필요</li>
-        </ul>
-      </div>
-      <div class="platform-card">
-        <h4>🔵 다나와 / 에누리</h4>
-        <ul>
-          <li>최저가 상품 (1 page, 40개 기준 검색)</li>
-          <li>카탈로그 기반 동일 상품 판별</li>
-          <li>네이버 가격비교 URL 적합성 확인 필요</li>
-        </ul>
-      </div>
-      <div class="platform-card">
-        <h4>🟠 G마켓 / 11번가</h4>
-        <ul>
-          <li>최저가 상품 (1 page, 40개 기준 검색)</li>
-          <li>삼성에서 제공한 검색어로 조회 후 매칭 상품 찾기</li>
-          <li>카드 할인 정보 수집 시 별도 파서 개발 필요</li>
-        </ul>
+        <h4><br></h4></div><div class="platform-card"><h4><span style="color: rgb(155, 165, 190); font-size: 10px;">✕</span></h4>
       </div>
     </div>
 
@@ -860,7 +829,7 @@
         </div>
         <div class="flow-content">
           <h4>타겟 상품 확인</h4>
-          <p>당일 배정된 버킷플레이스 타겟 URL/상품 목록 확인. 행 기준으로 작업 수량이 결정됩니다 (1회차 1,300~1,700개 처리).</p>
+          <p>당일 배정된 버킷플레이스 타겟 URL/상품 목록 확인. 행 기준으로 작업 수량이 결정됩니다&nbsp;</p>
         </div>
       </div>
       <div class="flow-item">
@@ -870,7 +839,7 @@
         </div>
         <div class="flow-content">
           <h4>수집 개수 확인</h4>
-          <p>후보 리스트 수집 개수를 확인합니다. 0개이면 레포트 작성, 1개이면 네이버 가격비교에서 브랜드+상품명으로 검색, 1개 이상이면 후보 리스트에서 최저가 검증 진행.</p>
+          <p>후보 리스트 수집 개수를 확인합니다. 0개이면 레포트 작성, 5개 미만이면 네이버 가격비교에서 브랜드+상품명으로 검색, 5개 이상이면 후보 리스트에서 최저가 검증 진행.</p>
         </div>
       </div>
       <div class="flow-item">
@@ -900,7 +869,7 @@
         </div>
         <div class="flow-content">
           <h4>결과 입력 및 레포트</h4>
-          <p>어드민 작업 툴에 결과 입력. DB에 없는 수집 불가 상품은 레포트 작성하여 DS 관리자에게 전달. 애매한 케이스는 슬랙에 남겨 확인 요청.</p>
+          <p><br></p>
         </div>
       </div>
       <div class="flow-item">
@@ -910,7 +879,7 @@
         </div>
         <div class="flow-content">
           <h4>DS 관리자 최종 교차 검수</h4>
-          <p>DS 관리자가 최종 교차 검수 후 버킷플레이스 측에 전달. All Pass 건에 대해서만 최종 교차 검수 진행 (6:30분경 확인).</p>
+          <p><br></p>
         </div>
       </div>
     </div>
@@ -925,22 +894,16 @@
             <th>인원</th>
           </tr>
         </thead>
-        <tbody id="schedule-table-body" data-field="schedule-table-body">
+        <tbody>
           <tr>
-            <td>매주 화요일</td>
-            <td>1회차 최저가 검수 작업 (오후 2시~7시)</td>
-            <td>5명</td>
-          </tr>
+            <td><br></td>
+            <td><br></td><td></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"><button class="row-del-btn block-btn del" title="행 삭제" onclick="deleteRow(this)" style="width:20px;height:20px;font-size:10px;opacity:0.4;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4">✕</button></td></tr><tr><td></td><td></td><td><br></td>
+          <td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"><button class="row-del-btn block-btn del" title="행 삭제" onclick="deleteRow(this)" style="width:20px;height:20px;font-size:10px;opacity:0.4;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4">✕</button></td></tr>
           <tr>
-            <td>4월 15~17일</td>
-            <td>버킷 작업자 일정 확인 (네이버 쇼핑 영향으로 조정)</td>
-            <td>확인 중</td>
-          </tr>
-          <tr>
-            <td>4월 말</td>
-            <td>PoC 최종 마무리 예정</td>
+            <td><br></td>
+            <td><br></td>
             <td>-</td>
-          </tr>
+          <td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"></td><td style="width: 28px; padding: 0px; text-align: center; vertical-align: middle;"><button class="row-del-btn block-btn del" title="행 삭제" onclick="deleteRow(this)" style="width:20px;height:20px;font-size:10px;opacity:0.4;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4">✕</button></td></tr>
         </tbody>
       </table>
     </div>
@@ -950,99 +913,15 @@
   <section id="section-faq" class="section">
     <div class="section-title">자주 하는 질문</div>
 
-    <div class="faq-list" id="faq-list" data-field="faq-list">
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>적립금과 포인트를 최저가에 포함해야 하나요?</span>
-          <span class="arrow">▾</span>
-        </div>
-        <div class="faq-a">
-          <strong>네이버 적립금은 최저가 판단 기준에서 제외합니다.</strong> 네이버 포인트는 로그인해서 확인하고, 포인트 포함 일 시 반영하여 최저가를 판단합니다. 쿠팡의 경우 쿠폰이 반영된 실 판매가가 기재된 경우 그 금액으로 기록합니다.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>수집 후보가 0개인 경우 어떻게 처리하나요?</span>
-          <span class="arrow">▾</span>
-        </div>
-        <div class="faq-a">
-          DB에 없는 경우 레포트를 작성합니다. 이후 PoC 기간에 검색 최적화를 미리 해두면 고도화가 가능합니다. 다나와, 에누리, 네이버 카탈로그에 있는 것들에 대해서라도 수집을 시도하고, DB에 없으면 레포트 작성합니다.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>네이버와 타 스토어 가격이 같을 때 어떤 기준으로 선택하나요?</span>
-          <span class="arrow">▾</span>
-        </div>
-        <div class="faq-a">
-          <strong>네이버를 최저가로 선택합니다.</strong> 가격이 다른 경우에는 적립금을 제외한 실 판매가 기준으로 가장 낮은 곳을 선택합니다.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>쿠팡에서 수집이 403 오류로 막히면 어떻게 하나요?</span>
-          <span class="arrow">▾</span>
-        </div>
-        <div class="faq-a">
-          쿠팡은 단순 HTTP requests 방식은 403으로 차단됩니다. <strong>browser 기반 수집</strong>으로 전환하거나, enhans-scraper 경유 방식을 사용합니다. 직접 요청이 막혔을 때는 브라우저 자동화 기반 수집이 현실적인 대안입니다.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>코스트코 상품은 어떻게 처리하나요?</span>
-          <span class="arrow">▾</span>
-        </div>
-        <div class="faq-a">
-          코스트코는 <strong>옵션이 있으면 일단 전부 제외</strong>입니다. 지마켓/옥션의 경우 옵션 선택 시 별도 상품코드로 빠지는 경우만 가능합니다. 옵션이 없는 코스트코 단품은 수집 가능합니다.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>7% 가구 브랜드데이 할인 쿠폰은 최저가 적용 가능한가요?</span>
-          <span class="arrow">▾</span>
-        </div>
-        <div class="faq-a">
+    <div class="faq-list" id="faq-list" data-field="faq-list"><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>적립금과 포인트를 최저가에 포함해야 하나요?</span><span class="arrow">▾</span></div><div class="faq-a">
+          <strong>네이버 적립금은 최저가 판단 기준에서 제외합니다.</strong> 네이버 포인트는 로그인해서 확인하고, 포인트 포함 일 시 반영하여 최저가를 판단합니다.&nbsp;</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>수집 후보가 0개인 경우 어떻게 처리하나요?</span><span class="arrow">▾</span></div><div class="faq-a">수집 후보가 0으로 나온 것은 아직 수집중인 데이터로, 대기 후 수집이 보일 시 작업하시면 됩니다.&nbsp;</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>네이버와 타 스토어 가격이 같을 때 어떤 기준으로 선택하나요?</span><span class="arrow">▾</span></div><div class="faq-a">
+          <strong>네이버를 최저가로 선택합니다.</strong> 가격이 다른 경우에는 적립금을 제외한 실 판매가 기준으로 가장 낮은 곳을 선택합니다.ㄱㄱㄱㄱㄱㄱ</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>7% 가구 브랜드데이 할인 쿠폰은 최저가 적용 가능한가요?</span><span class="arrow">▾</span></div><div class="faq-a">
           플랫폼별, 상품별로 다양한 쿠폰이 있으므로 더블체크가 필요합니다. 고객과 합의한 기준은: <strong>네이버 라운지 전용 쿠폰, 카드할인, 첫구매 쿠폰은 제외</strong>합니다. 쿠폰이 반영된 실 판매가가 기재되어 있다면 그 금액으로 기록하는 것이 맞습니다. 애매한 특이사항은 슬랙에 공유해주세요.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>식품류 수집 제외 기준은 무엇인가요?</span>
-          <span class="arrow">▾</span>
-        </div>
-        <div class="faq-a">
-          기본적으로 <strong>김치, 샐러드 등 신선 식품류는 제외</strong>합니다. 단, 가공식품인 경우는 괜찮습니다 (예: 해물 누룽지탕 냉동팩). 동일 상품 판별이 어렵고 유통 특성상 가격 변동이 심한 신선 식품은 제외하는 것이 원칙입니다.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>수집 배치는 어떤 일정으로 운영하나요?</span>
-          <span class="arrow">▾</span>
-        </div>
-        <div class="faq-a">
-          현재는 <strong>매일 오전 1시~9시 배치</strong> 형태로 운영됩니다. 중장기적으로는 24시간 상시 동작 형태 전환을 검토 중이며, 이 경우 시간당 수집 모수가 낮아져 더 많은 상품 정보를 효율적으로 수집할 수 있습니다. 전체 상품을 일주일에 나누어 수집하는 방식도 검토 중입니다.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>애매한 케이스 (pending) 처리 기준은 무엇인가요?</span>
-          <span class="arrow">▾</span>
-        </div>
-        <div class="faq-a">
-          판단 기준이 불명확한 경우 <strong>pending으로 처리</strong>하고, 슬랙 채널에 케이스를 공유하여 가이드 업데이트를 요청합니다. 예시: 에너지효율등급 등급 판단 기준이 애매한 것들, 청소년보호/성인인증상품의 일반 기준을 벗어나는 상품들은 발견 후 검수 대상으로 추가하는 식으로 사후 처리 가능하지만 사전에 완벽하게 차단하기 어렵습니다.
-        </div>
-      </div>
-
-    </div>
+        </div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>애매한 케이스 처리 기준은 무엇인가요?</span><span class="arrow">▾</span></div><div class="faq-a">
+          판단 기준이 불명확한 경우, 슬랙 채널에 케이스를 공유하여 가이드 업데이트를 요청합니다. 관리자에게 처리 방법을 문의합니다.&nbsp;</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>유통기한 임박 상품의 매칭은 어떻게 하나요?</span><span class="arrow">▾</span></div><div class="faq-a">동일하게 유통기한 임박 상품에 대해서만 매칭합니다.</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>2순위 작업은 어떻게 하나요?</span><span class="arrow">▾</span></div><div class="faq-a">- 오늘의 집이 최저가인 경우, 두번째로 싼 가격의 상품 정보를 기재합니다. <br>ㄴ 오늘의 집 제외한 매칭 url이 하나라도 있을 경우 적용<br>&nbsp;ㄴ 리툴 수집 후보군에는 매칭 url이 없더라도, 추가 네이버 검색시 추가 매칭 url을 발견했던 경우도 적용한다.&nbsp;</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>가격 적용의 기준은 어떻게 되나요?</span><span class="arrow">▾</span></div><div class="faq-a">url을 열어 최종 가격으로 수집합니다.</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>네이버 '나의 할인가' 입력 기준은 어떻게 되나요?</span><span class="arrow">▾</span></div><div class="faq-a">* 적용 항목: 알림 쿠폰
+*</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>매칭 플랫폼에 Unknown 이라고 적혀져있어요. / 이상한 url이 적혀져 있어요.</span><span class="arrow">▾</span></div><div class="faq-a">매칭 플랫폼이 Unknown 이고 url 이 이상한 경우 : 시스템에서 오류로 찾은 행이므로 수집후보 리스트에서 무시하셔도 됩니다.
+해당 행을 무시하라는 것이고, 최저가 찾는 작업은 그대로 진행하셔야 합니다.
+예를 들어 Unknown으로 되어 있는 거 하나만 있으면, '시스템이 잘 못 찾았다'라고 판단하고 네이버 가격비교에 직접 검색하셔서 찾으셔야 합니다.</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>로켓배송 최소 금액 미충족시, 매칭 대상에서 제외하나요?</span><span class="arrow">▾</span></div><div class="faq-a">- 배송비 조건은 고려하지 않음<br>- 기재된 배송비 금액만 더하면 됨</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>적용하면 안되는 쿠폰은 뭐가 있나요?</span><span class="arrow">▾</span></div><div class="faq-a">- 단기성 쿠폰 (하루 미만, 2시간 , 30분 타임세일 등 최대 24시간 내에 사용해야 하는 쿠폰)</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>해외 상품 비교 기준</span><span class="arrow">▾</span></div><div class="faq-a">- 오늘의집이 국내상품 → 해외상품 비교 제외&nbsp;</div></div></div>
   </section>
 
 </main>
@@ -1053,7 +932,7 @@
     <h3>🔐 관리자 인증</h3>
     <div class="form-group">
       <label>비밀번호</label>
-      <input type="password" id="admin-password" placeholder="관리자 비밀번호 입력" onkeydown="if(event.key==='Enter') verifyAdmin()" />
+      <input type="password" id="admin-password" placeholder="관리자 비밀번호 입력" onkeydown="if(event.key==='Enter') verifyAdmin()">
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('admin-modal')">취소</button>
@@ -1068,7 +947,7 @@
     <h3>❓ 자주 하는 질문 추가</h3>
     <div class="form-group">
       <label>질문</label>
-      <input type="text" id="faq-q-input" placeholder="질문을 입력하세요" />
+      <input type="text" id="faq-q-input" placeholder="질문을 입력하세요">
     </div>
     <div class="form-group">
       <label>답변</label>
@@ -1470,5 +1349,6 @@
   if(window.__fb) initFirebase();
   else window.addEventListener('firebase-ready', initFirebase, { once: true });
 </script>
-</body>
-</html>
+
+
+</body></html>

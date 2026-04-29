@@ -1134,9 +1134,7 @@
       pendingChanges[el.dataset.field] = el.innerHTML;
     });
     pendingChanges['faq_items'] = JSON.stringify(getFaqItems());
-    document.querySelectorAll('.section').forEach(sec => {
-      const skey = 'sec_' + sec.id.replace('section-', '');
-      pendingChanges[skey] = sec.innerHTML;
+    
     });
     const { db, ref, set } = window.__fb;
     updateStatus('저장 중...');

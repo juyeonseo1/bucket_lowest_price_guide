@@ -775,7 +775,7 @@
 
     <div class="platform-grid" id="platform-grid" data-field="platform-grid">
       <div class="platform-card">
-        <h4>- 오늘의 집 &lt;- &gt; 네이버 가격비교에서 검색하여 비교</h4><div>- 네이버 가격비교에 나오는 실제 판매 플랫폼의 정보를 가져온다. ㄷㄷㄷㄷㄷ</div></div>
+        <h4>- 오늘의 집 &lt;- &gt; 네이버 가격비교에서 검색하여 비교</h4><div>- 네이버 가격비교에 나오는 실제 판매 플랫폼의 정보를 가져온다.&nbsp;</div></div>
       <div class="platform-card">
         <h4><br></h4></div><div class="platform-card"><h4><span style="color: rgb(155, 165, 190); font-size: 10px;">✕</span></h4>
       </div>
@@ -783,50 +783,71 @@
 
     <div class="section-title">수집 제외 대상</div>
     <div class="card">
-      <table class="rules-table" id="exclude-table" data-field="exclude-table">
-        <thead>
-          <tr>
-            <th>항목</th>
-            <th>제외 이유</th>
-            <th>예외 처리</th>
-          </tr>
-        </thead>
-        <tbody id="exclude-table-body" data-field="exclude-table-body">
-          
-
-  <!-- ── FLOW ── -->
-<section id="section-flow" class="section">
+      <section id="section-flow" class="section">
     <div class="section-title">작업 흐름 (Step-by-Step)</div>
     <div class="flow" id="flow-steps" data-field="flow-steps">
       <div class="flow-item">
-        <div class="flow-line"><div class="flow-dot">1</div><div class="flow-connector"></div></div>
-        <div class="flow-content"><h4>타겟 상품 확인</h4><p>당일 배정된 버킷플레이스 타겟 URL/상품 목록 확인. 행 기준으로 작업 수량이 결정됩니다</p></div>
+        <div class="flow-line">
+          <div class="flow-dot">1</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>타겟 상품 확인</h4>
+          <p>당일 배정된 버킷플레이스 타겟 URL/상품 목록 확인. 행 기준으로 작업 수량이 결정됩니다&nbsp;</p>
+        </div>
       </div>
       <div class="flow-item">
-        <div class="flow-line"><div class="flow-dot">2</div><div class="flow-connector"></div></div>
-        <div class="flow-content"><h4>수집 개수 확인</h4><p>후보 리스트 수집 개수를 확인합니다. 0개이면 레포트 작성, 5개 미만이면 네이버 가격비교에서 브랜드+상품명으로 검색, 5개 이상이면 후보 리스트에서 최저가 검증 진행.</p></div>
+        <div class="flow-line">
+          <div class="flow-dot">2</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>수집 개수 확인</h4>
+          <p>후보 리스트 수집 개수를 확인합니다. 0개이면 레포트 작성, 5개 미만이면 네이버 가격비교에서 브랜드+상품명으로 검색, 5개 이상이면 후보 리스트에서 최저가 검증 진행.</p>
+        </div>
       </div>
       <div class="flow-item">
-        <div class="flow-line"><div class="flow-dot">3</div><div class="flow-connector"></div></div>
-        <div class="flow-content"><h4>동일 상품 판별</h4><p>상품명 + 수량 + 용량 기준으로 동일 상품 여부를 판별합니다. 혼합 세트 포함, 핵심 키워드 누락, 수량/용량 불일치 시 제외 처리.</p></div>
+        <div class="flow-line">
+          <div class="flow-dot">3</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>동일 상품 판별</h4>
+          <p>상품명 + 수량 + 용량 기준으로 동일 상품 여부를 판별합니다. 혼합 세트 포함, 핵심 키워드 누락, 수량/용량 불일치 시 제외 처리.</p>
+        </div>
       </div>
       <div class="flow-item">
-        <div class="flow-line"><div class="flow-dot">4</div><div class="flow-connector"></div></div>
-        <div class="flow-content"><h4>최저가 산출</h4><p>동일 상품으로 판별된 후보들에서 적립금/쿠폰 제외 실 판매가 기준 최저가를 선택. 네이버와 타 스토어가 동일 가격이면 네이버 선택.</p></div>
+        <div class="flow-line">
+          <div class="flow-dot">4</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>최저가 산출</h4>
+          <p>동일 상품으로 판별된 후보들에서 적립금/쿠폰 제외 실 판매가 기준 최저가를 선택. 네이버와 타 스토어가 동일 가격이면 네이버 선택.</p>
+        </div>
       </div>
       <div class="flow-item">
-        <div class="flow-line"><div class="flow-dot">5</div><div class="flow-connector"></div></div>
-        <div class="flow-content"><h4>결과 입력 및 레포트</h4><p></p></div>
+        <div class="flow-line">
+          <div class="flow-dot">5</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>결과 입력 및 레포트</h4>
+          <p><br></p>
+        </div>
       </div>
       <div class="flow-item">
-        <div class="flow-line"><div class="flow-dot">6</div><div class="flow-connector"></div></div>
-        <div class="flow-content"><h4>DS 관리자 최종 교차 검수</h4><p></p></div>
+        <div class="flow-line">
+          <div class="flow-dot">6</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <h4>DS 관리자 최종 교차 검수</h4>
+          <p><br></p>
+        </div>
       </div>
     </div>
-  </section>
-
-  <!-- ── FAQ ── -->
-  <section id="section-faq" class="section">
+  </section><section id="section-faq" class="section">
     <div class="section-title">자주 하는 질문</div>
 
     <div class="faq-list" id="faq-list" data-field="faq-list"><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>적립금과 포인트를 최저가에 포함해야 하나요?</span><span class="arrow">▾</span></div><div class="faq-a">
@@ -838,12 +859,7 @@
 *</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>매칭 플랫폼에 Unknown 이라고 적혀져있어요. / 이상한 url이 적혀져 있어요.</span><span class="arrow">▾</span></div><div class="faq-a">매칭 플랫폼이 Unknown 이고 url 이 이상한 경우 : 시스템에서 오류로 찾은 행이므로 수집후보 리스트에서 무시하셔도 됩니다.
 해당 행을 무시하라는 것이고, 최저가 찾는 작업은 그대로 진행하셔야 합니다.
 예를 들어 Unknown으로 되어 있는 거 하나만 있으면, '시스템이 잘 못 찾았다'라고 판단하고 네이버 가격비교에 직접 검색하셔서 찾으셔야 합니다.</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>로켓배송 최소 금액 미충족시, 매칭 대상에서 제외하나요?</span><span class="arrow">▾</span></div><div class="faq-a">- 배송비 조건은 고려하지 않음<br>- 기재된 배송비 금액만 더하면 됨</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>적용하면 안되는 쿠폰은 뭐가 있나요?</span><span class="arrow">▾</span></div><div class="faq-a">- 단기성 쿠폰 (하루 미만, 2시간 , 30분 타임세일 등 최대 24시간 내에 사용해야 하는 쿠폰)</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>해외 상품 비교 기준</span><span class="arrow">▾</span></div><div class="faq-a">- 오늘의집이 국내상품 → 해외상품 비교 제외&nbsp;</div></div></div>
-  </section>
-
-</main>
-
-<!-- ── ADMIN MODAL ── -->
-<div class="modal-overlay" id="admin-modal">
+  </section><div class="modal-overlay" id="admin-modal">
   <div class="modal">
     <h3>🔐 관리자 인증</h3>
     <div class="form-group">
@@ -855,10 +871,7 @@
       <button class="btn-primary" onclick="verifyAdmin()">확인</button>
     </div>
   </div>
-</div>
-
-<!-- FAQ 추가 모달 -->
-<div class="modal-overlay" id="faq-modal">
+</div><div class="modal-overlay" id="faq-modal">
   <div class="modal">
     <h3>❓ 자주 하는 질문 추가</h3>
     <div class="form-group">
@@ -874,10 +887,33 @@
       <button class="btn-primary" onclick="saveFaq()">저장</button>
     </div>
   </div>
-</div>
+</div><div id="toast"></div><table class="rules-table" id="exclude-table" data-field="exclude-table">
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>제외 이유</th>
+            <th>예외 처리</th>
+          </tr>
+        </thead>
+        <tbody id="exclude-table-body" data-field="exclude-table-body">
+          
+
+  <!-- ── FLOW ── -->
+
+
+  <!-- ── FAQ ── -->
+  
+
+
+
+<!-- ── ADMIN MODAL ── -->
+
+
+<!-- FAQ 추가 모달 -->
+
 
 <!-- Toast -->
-<div id="toast"></div>
+
 
 <script>
   const DB_PATH = "bucket_lowest_price_guide/v1";
@@ -1267,4 +1303,5 @@
 </script>
 
 
-</body></html>
+
+</tbody></table></div></section></main></body></html>

@@ -12,48 +12,57 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Install node-fetch
-        run: npm install node-fetch@2
+      - name: Install dependencies
+        run: npm install node-fetch@2 cheerio
 
       - name: Fetch Firebase data and update index.html
         env:
           FIREBASE_URL: https://bucket-lowest-price-guide-default-rtdb.firebaseio.com/bucket_lowest_price_guide/v1.json
         run: |
-          node << 'EOF'
+          node <<'EOF'
           const fetch = require('node-fetch');
           const fs = require('fs');
+          const cheerio = require('cheerio');
 
           async function main() {
-            // Firebase에서 데이터 읽기
             const res = await fetch(process.env.FIREBASE_URL);
             const data = await res.json();
-            if(!data) { console.log('Firebase 데이터 없음'); return; }
+            if (!data) { console.log('Firebase 데이터 없음'); return; }
 
-            // 현재 index.html 읽기
-            let html = fs.readFileSync('index.html', 'utf8');
+            const html = fs.readFileSync('index.html', 'utf8');
+            // HTML 구조(태그, CSS, JS)는 그대로 유지하고 내용(content)만 업데이트
+            const $ = cheerio.load(html, { decodeEntities: false });
 
-            // section_ 키가 있으면 섹션 전체 교체
-            const sectionKeys = Object.keys(data).filter(k => k.startsWith('section_'));
-            if(sectionKeys.length > 0) {
-              sectionKeys.forEach(key => {
-                const sectionId = key.replace('section_', '');
-                const content = data[key];
-                // section 태그 내용 교체
-                const regex = new RegExp(`(<section[^>]+id="${sectionId}"[^>]*>)([\s\S]*?)(</section>)`, 'i');
-                html = html.replace(regex, `$1${content}$3`);
-              });
-            } else {
-              // 개별 data-field 교체
-              Object.keys(data).forEach(key => {
-                if(key === 'faq_items' || key.startsWith('section_')) return;
-                const content = data[key];
-                // data-field 속성을 가진 요소의 innerHTML 교체
-                const regex = new RegExp(`(data-field="${key}"[^>]*>)([\s\S]*?)(<\/[^>]+>)(?=\s*<\/[^>]*>|\s*<div|\s*<section|\s*$)`, 'i');
-                html = html.replace(regex, `$1${content}$3`);
-              });
+            // data-field 개별 요소만 업데이트 (HTML 구조 보존)
+            Object.keys(data).forEach(key => {
+              if (key.startsWith('sec_') || key === 'faq_items') return;
+              const el = $('[data-field="' + key + '"]');
+              if (el.length) {
+                el.html(data[key]);
+                console.log('필드 업데이트:', key);
+              }
+            });
+
+            // faq_items 처리
+            if (data.faq_items) {
+              try {
+                const items = JSON.parse(data.faq_items);
+                const faqList = $('#faq-list');
+                if (faqList.length && items.length > 0) {
+                  const faqHtml = items.map(function(item) {
+                    return '<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>' +
+                      item.q + '</span><span class="arrow">▾</span></div><div class="faq-a">' +
+                      item.a + '</div></div>';
+                  }).join('');
+                  faqList.html(faqHtml);
+                  console.log('FAQ 업데이트 완료');
+                }
+              } catch(e) {
+                console.log('faq_items 파싱 오류:', e.message);
+              }
             }
 
-            fs.writeFileSync('index.html', html);
+            fs.writeFileSync('index.html', $.html());
             console.log('index.html 업데이트 완료');
           }
 

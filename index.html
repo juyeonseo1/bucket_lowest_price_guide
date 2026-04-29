@@ -767,9 +767,7 @@
         <button class="block-btn" title="아래로" onclick="moveBlock(this,'down')">↓</button>
         <button class="block-btn del" title="삭제" onclick="deleteBlock(this)">✕</button>
       </div></div>
-  </section>
-
-  <!-- ── PLATFORMS ── -->
+    <!-- ── PLATFORMS ── -->
   <section id="section-platforms" class="section">
     <div class="section-title">플랫폼별 수집 기준</div>
 
@@ -783,7 +781,22 @@
 
     <div class="section-title">수집 제외 대상</div>
     <div class="card">
-      <section id="section-flow" class="section">
+      <table class="rules-table" id="exclude-table" data-field="exclude-table">
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>제외 이유</th>
+            <th>예외 처리</th>
+          </tr>
+        </thead>
+        <tbody id="exclude-table-body" data-field="exclude-table-body">
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── FLOW ── -->
+  <section id="section-flow" class="section">
     <div class="section-title">작업 흐름 (Step-by-Step)</div>
     <div class="flow" id="flow-steps" data-field="flow-steps">
       <div class="flow-item">
@@ -793,7 +806,7 @@
         </div>
         <div class="flow-content">
           <h4>타겟 상품 확인</h4>
-          <p>당일 배정된 버킷플레이스 타겟 URL/상품 목록 확인. 행 기준으로 작업 수량이 결정됩니다&nbsp;</p>
+          <p>당일 배정된 버킷플레이스 타겟 URL/상품 목록 확인. 행 기준으로 작업 수량이 결정됩니다</p>
         </div>
       </div>
       <div class="flow-item">
@@ -833,7 +846,7 @@
         </div>
         <div class="flow-content">
           <h4>결과 입력 및 레포트</h4>
-          <p><br></p>
+          <p></p>
         </div>
       </div>
       <div class="flow-item">
@@ -843,11 +856,14 @@
         </div>
         <div class="flow-content">
           <h4>DS 관리자 최종 교차 검수</h4>
-          <p><br></p>
+          <p></p>
         </div>
       </div>
     </div>
-  </section><section id="section-faq" class="section">
+  </section>
+
+  <!-- ── FAQ ── -->
+  <section id="section-faq" class="section">
     <div class="section-title">자주 하는 질문</div>
 
     <div class="faq-list" id="faq-list" data-field="faq-list"><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>적립금과 포인트를 최저가에 포함해야 하나요?</span><span class="arrow">▾</span></div><div class="faq-a">
@@ -859,7 +875,12 @@
 *</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>매칭 플랫폼에 Unknown 이라고 적혀져있어요. / 이상한 url이 적혀져 있어요.</span><span class="arrow">▾</span></div><div class="faq-a">매칭 플랫폼이 Unknown 이고 url 이 이상한 경우 : 시스템에서 오류로 찾은 행이므로 수집후보 리스트에서 무시하셔도 됩니다.
 해당 행을 무시하라는 것이고, 최저가 찾는 작업은 그대로 진행하셔야 합니다.
 예를 들어 Unknown으로 되어 있는 거 하나만 있으면, '시스템이 잘 못 찾았다'라고 판단하고 네이버 가격비교에 직접 검색하셔서 찾으셔야 합니다.</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>로켓배송 최소 금액 미충족시, 매칭 대상에서 제외하나요?</span><span class="arrow">▾</span></div><div class="faq-a">- 배송비 조건은 고려하지 않음<br>- 기재된 배송비 금액만 더하면 됨</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>적용하면 안되는 쿠폰은 뭐가 있나요?</span><span class="arrow">▾</span></div><div class="faq-a">- 단기성 쿠폰 (하루 미만, 2시간 , 30분 타임세일 등 최대 24시간 내에 사용해야 하는 쿠폰)</div></div><div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>해외 상품 비교 기준</span><span class="arrow">▾</span></div><div class="faq-a">- 오늘의집이 국내상품 → 해외상품 비교 제외&nbsp;</div></div></div>
-  </section><div class="modal-overlay" id="admin-modal">
+  </section>
+
+</main>
+
+<!-- ── ADMIN MODAL ── -->
+<div class="modal-overlay" id="admin-modal">
   <div class="modal">
     <h3>🔐 관리자 인증</h3>
     <div class="form-group">
@@ -871,7 +892,10 @@
       <button class="btn-primary" onclick="verifyAdmin()">확인</button>
     </div>
   </div>
-</div><div class="modal-overlay" id="faq-modal">
+</div>
+
+<!-- FAQ 추가 모달 -->
+<div class="modal-overlay" id="faq-modal">
   <div class="modal">
     <h3>❓ 자주 하는 질문 추가</h3>
     <div class="form-group">
@@ -887,33 +911,10 @@
       <button class="btn-primary" onclick="saveFaq()">저장</button>
     </div>
   </div>
-</div><div id="toast"></div><table class="rules-table" id="exclude-table" data-field="exclude-table">
-        <thead>
-          <tr>
-            <th>항목</th>
-            <th>제외 이유</th>
-            <th>예외 처리</th>
-          </tr>
-        </thead>
-        <tbody id="exclude-table-body" data-field="exclude-table-body">
-          
-
-  <!-- ── FLOW ── -->
-
-
-  <!-- ── FAQ ── -->
-  
-
-
-
-<!-- ── ADMIN MODAL ── -->
-
-
-<!-- FAQ 추가 모달 -->
-
+</div>
 
 <!-- Toast -->
-
+<div id="toast"></div>
 
 <script>
   const DB_PATH = "bucket_lowest_price_guide/v1";
@@ -921,7 +922,6 @@
   let pendingChanges = {};
   let fbReady = false;
 
-  // Firebase Realtime Database 초기화
   function initFirebase() {
     const { db, ref, set, onValue } = window.__fb;
     fbReady = true;
@@ -935,14 +935,12 @@
     if(dot) dot.style.background = live ? 'var(--accent2)' : 'var(--text3)';
   }
 
-  // ── TAB ──
   function showSection(id, tabEl) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     const sec = document.getElementById('section-' + id);
     if(sec) sec.classList.add('active');
     if(tabEl) tabEl.classList.add('active');
-    // 편집 모드면 새로 보이는 섹션에도 contentEditable 재적용
     if(isAdmin) {
       sec && sec.querySelectorAll('[data-field]').forEach(el => {
         el.contentEditable = 'true';
@@ -958,13 +956,11 @@
     }
   }
 
-  // ── FAQ Toggle ──
   function toggleFaq(el) {
     const item = el.closest('.faq-item');
     item.classList.toggle('open');
   }
 
-  // ── ADMIN ──
   function toggleAdminMode() {
     if(isAdmin) {
       exitAdmin();
@@ -1002,21 +998,14 @@
   }
 
   function enableEditing() {
-    // FAQ 추가 버튼
     const faqAdd = document.createElement('button');
     faqAdd.textContent = '+ 질문 추가';
     faqAdd.id = 'faq-add-btn';
-    faqAdd.style.cssText = `
-      margin-top:12px; padding:8px 16px; border-radius:7px;
-      background:var(--surface2); border:1px dashed var(--accent);
-      color:var(--accent); font-size:13px; font-weight:600;
-      cursor:pointer; font-family:inherit; width:100%;
-    `;
+    faqAdd.style.cssText = `margin-top:12px; padding:8px 16px; border-radius:7px; background:var(--surface2); border:1px dashed var(--accent); color:var(--accent); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; width:100%;`;
     faqAdd.onclick = () => document.getElementById('faq-modal').classList.add('show');
     const faqList = document.getElementById('faq-list');
     if(faqList) faqList.after(faqAdd);
 
-    // 모든 섹션의 data-field에 contentEditable 적용 (display:none 포함)
     document.querySelectorAll('[data-field]').forEach(el => {
       el.contentEditable = 'true';
       el.style.outline = '2px solid transparent';
@@ -1027,15 +1016,6 @@
         pendingChanges[el.dataset.field] = el.innerHTML;
       };
     });
-
-    // 현재 활성 섹션 힌트 표시
-    const activeSection = document.querySelector('.section.active');
-    if(activeSection) {
-      activeSection.querySelectorAll('[data-field]').forEach(el => {
-        el.title = '클릭하여 편집';
-      });
-    }
-    // 블록 컨트롤 추가
     addBlockControls();
   }
 
@@ -1046,36 +1026,27 @@
       el.contentEditable = 'false';
       el.style.outline = '';
     });
-    // 블록/행 컨트롤 전체 제거
     document.querySelectorAll('.block-controls, .row-del-btn, .faq-del-btn').forEach(el => el.remove());
   }
 
-  // ── 블록 컨트롤 (편집/삭제/이동) ──
   function addBlockControls() {
-    // 카드 단위 컨트롤 (위/아래/삭제)
     document.querySelectorAll('.card').forEach(card => {
       if(card.querySelector('.block-controls')) return;
       const ctrl = document.createElement('div');
       ctrl.className = 'block-controls';
-      ctrl.innerHTML = `
-        <button class="block-btn" title="위로" onclick="moveBlock(this,'up')">↑</button>
-        <button class="block-btn" title="아래로" onclick="moveBlock(this,'down')">↓</button>
-        <button class="block-btn del" title="삭제" onclick="deleteBlock(this)">✕</button>
-      `;
+      ctrl.innerHTML = `<button class="block-btn" title="위로" onclick="moveBlock(this,'up')">↑</button><button class="block-btn" title="아래로" onclick="moveBlock(this,'down')">↓</button><button class="block-btn del" title="삭제" onclick="deleteBlock(this)">✕</button>`;
       card.appendChild(ctrl);
     });
 
-    // 행(tr) 단위 삭제 버튼
     document.querySelectorAll('[data-field] tr').forEach(tr => {
       if(tr.querySelector('.row-del-btn')) return;
-      if(tr.closest('thead')) return; // 헤더 행 제외
+      if(tr.closest('thead')) return;
       const td = document.createElement('td');
       td.style.cssText = 'width:28px;padding:0;text-align:center;vertical-align:middle;';
       td.innerHTML = `<button class="row-del-btn block-btn del" title="행 삭제" onclick="deleteRow(this)" style="width:20px;height:20px;font-size:10px;opacity:0.4;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4">✕</button>`;
       tr.appendChild(td);
     });
 
-    // 리스트 항목(li) 단위 삭제 버튼
     document.querySelectorAll('[data-field] li').forEach(li => {
       if(li.querySelector('.row-del-btn')) return;
       const btn = document.createElement('button');
@@ -1091,7 +1062,6 @@
       li.appendChild(btn);
     });
 
-    // FAQ 항목 삭제 버튼
     document.querySelectorAll('.faq-item').forEach(item => {
       if(item.querySelector('.faq-del-btn')) return;
       const btn = document.createElement('button');
@@ -1129,36 +1099,23 @@
     saveAllChanges();
   }
 
-  // ── MODAL ──
   function closeModal(id) {
     document.getElementById(id).classList.remove('show');
   }
   document.querySelectorAll('.modal-overlay').forEach(m => {
-    m.addEventListener('click', e => {
-      if(e.target === m) m.classList.remove('show');
-    });
+    m.addEventListener('click', e => { if(e.target === m) m.classList.remove('show'); });
   });
 
-  // ── FAQ 저장 ──
   function saveFaq() {
     const q = document.getElementById('faq-q-input').value.trim();
     const a = document.getElementById('faq-a-input').value.trim();
     if(!q || !a) { showToast('질문과 답변을 모두 입력해주세요', 'error'); return; }
-
     const list = document.getElementById('faq-list');
     const item = document.createElement('div');
     item.className = 'faq-item';
-    item.innerHTML = `
-      <div class="faq-q" onclick="toggleFaq(this)">
-        <span>${q}</span>
-        <span class="arrow">▾</span>
-      </div>
-      <div class="faq-a">${a}</div>
-    `;
+    item.innerHTML = `<div class="faq-q" onclick="toggleFaq(this)"><span>${q}</span><span class="arrow">▾</span></div><div class="faq-a">${a}</div>`;
     list.appendChild(item);
-
     saveAllChanges();
-
     document.getElementById('faq-q-input').value = '';
     document.getElementById('faq-a-input').value = '';
     closeModal('faq-modal');
@@ -1171,21 +1128,16 @@
     }));
   }
 
-  // ── FIREBASE SAVE (Realtime Database) ──
   async function saveAllChanges() {
     if(!fbReady) { showToast('Firebase 연결 중...', 'error'); return; }
-
-    // data-field 개별 요소 저장
     document.querySelectorAll('[data-field]').forEach(el => {
       pendingChanges[el.dataset.field] = el.innerHTML;
     });
     pendingChanges['faq_items'] = JSON.stringify(getFaqItems());
-
-    // 섹션 전체 구조 저장 (블록 삭제/이동 반영)
     document.querySelectorAll('.section').forEach(sec => {
-      const skey = 'sec_' + sec.id.replace('section-', ''); pendingChanges[skey] = sec.innerHTML;
+      const skey = 'sec_' + sec.id.replace('section-', '');
+      pendingChanges[skey] = sec.innerHTML;
     });
-
     const { db, ref, set } = window.__fb;
     updateStatus('저장 중...');
     try {
@@ -1203,15 +1155,12 @@
     }
   }
 
-  // ── FIREBASE LOAD (Realtime Database) ──
   function loadFromFirebase() {
     const { db, ref, onValue } = window.__fb;
     updateStatus('데이터 불러오는 중...');
     onValue(ref(db, DB_PATH), snap => {
       const data = snap.val();
       if(!data) { updateStatus('실시간 동기화 중'); return; }
-
-      // 섹션 전체 구조 복원 (블록 삭제/이동 포함)
       let sectionRestored = false;
       document.querySelectorAll('.section').forEach(sec => {
         const key = 'sec_' + sec.id.replace('section-', '');
@@ -1220,15 +1169,12 @@
           sectionRestored = true;
         }
       });
-
-      // 섹션 구조가 없으면 개별 data-field 복원
       if(!sectionRestored) {
         Object.keys(data).forEach(key => {
           if(key.startsWith('sec_') || key === 'faq_items') return;
           const el = document.querySelector(`[data-field="${key}"]`);
           if(el) el.innerHTML = data[key];
         });
-
         if(data.faq_items) {
           try {
             const items = JSON.parse(data.faq_items);
@@ -1238,13 +1184,7 @@
               items.forEach(item => {
                 const el = document.createElement('div');
                 el.className = 'faq-item';
-                el.innerHTML = `
-                  <div class="faq-q" onclick="toggleFaq(this)">
-                    <span>${item.q}</span>
-                    <span class="arrow">▾</span>
-                  </div>
-                  <div class="faq-a">${item.a}</div>
-                `;
+                el.innerHTML = `<div class="faq-q" onclick="toggleFaq(this)"><span>${item.q}</span><span class="arrow">▾</span></div><div class="faq-a">${item.a}</div>`;
                 list.appendChild(el);
               });
             }
@@ -1255,7 +1195,6 @@
     }, () => updateStatus('Firebase 연결 실패', false));
   }
 
-  // ── TOAST ──
   function showToast(msg, type='', duration=3000) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -1264,13 +1203,11 @@
     window._toastTimer = setTimeout(() => t.className = '', duration);
   }
 
-  // ── GITHUB ACTIONS 트리거 ──
   async function triggerGitHubActions() {
     const { db, ref, onValue } = window.__fb;
     return new Promise((resolve, reject) => {
       onValue(ref(db, 'config/gh_token'), async snap => {
         const token = snap.val();
-        console.log('gh_token 읽기:', token ? '성공' : '없음');
         if(!token) { reject('토큰 없음'); return; }
         try {
           const res = await fetch('https://api.github.com/repos/juyeonseo1/bucket_lowest_price_guide/dispatches', {
@@ -1280,28 +1217,19 @@
               'Accept': 'application/vnd.github.v3+json',
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-              event_type: 'firebase-update'
-            })
+            body: JSON.stringify({ event_type: 'firebase-update' })
           });
-          console.log('GitHub API 응답 상태:', res.status);
           if(res.status === 204) resolve('성공');
-          else {
-            const text = await res.text();
-            reject('GitHub API 오류 ' + res.status + ': ' + text);
-          }
-        } catch(e) {
-          reject('fetch 오류: ' + e.message);
-        }
+          else { const text = await res.text(); reject('GitHub API 오류 ' + res.status + ': ' + text); }
+        } catch(e) { reject('fetch 오류: ' + e.message); }
       }, { onlyOnce: true });
     });
   }
 
-  // ── INIT ──
   if(window.__fb) initFirebase();
   else window.addEventListener('firebase-ready', initFirebase, { once: true });
 </script>
 
-
-
-</tbody></table></div></section></main></body></html>
+</body>
+</html>
+    
